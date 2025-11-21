@@ -1,5 +1,6 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { Label } from "../ui/label";
+// TODO: Input Error State
+
+import { Dispatch, SetStateAction } from "react";
 import { Input } from "../ui/input";
 import {
   Card,
@@ -10,7 +11,13 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
-
+import { handleRegister } from "@/lib/utils";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { RegistrationData } from "@/lib/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Registration } from "@/lib/zod-schema";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { registrationFields } from "./auth-utils";
 const RegistrationForm = ({
   setMode,
   setOpenForm,
@@ -18,14 +25,13 @@ const RegistrationForm = ({
   setMode: Dispatch<SetStateAction<"login" | "signup">>;
   setOpenForm: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [registrationData, setRegistrationData] = useState({
-    email: "",
-    username: "",
-    password: "",
-    confirmPassowrd: "",
+  const { control, handleSubmit } = useForm<RegistrationData>({
+    resolver: zodResolver(Registration),
   });
 
-  const usernameRef = useRef<HTMLInputElement | null>(null);
+  const onSubmit: SubmitHandler<RegistrationData> = (data) =>
+    handleRegister(data, setOpenForm);
+
   return (
     <Card className="w-full md:max-w-md">
       <CardHeader className="flex justify-between items-center">
@@ -42,88 +48,50 @@ const RegistrationForm = ({
       </CardHeader>
       <CardContent>
         {" "}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log({ registrationData });
-          }}
-        >
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="johndoe123@gmail.com"
-                required
-                value={registrationData.email}
-                onChange={(e) =>
-                  setRegistrationData((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }))
-                }
+        <form onSubmit={handleSubmit(onSubmit)} id="registration-form">
+          <FieldGroup>
+            {registrationFields.map((item, index) => (
+              <Controller
+                key={index}
+                name={item.name}
+                control={control}
+                render={({ field, fieldState }) => {
+                  console.log({ field, fieldState });
+                  return (
+                    <Field data-invalid={fieldState.invalid} className="gap-2">
+                      <FieldLabel htmlFor={item.id}>{item.label}</FieldLabel>
+                      <Input
+                        {...field}
+                        id={item.id}
+                        aria-invalid={fieldState.invalid}
+                        placeholder={item.placeHolder}
+                        autoFocus={item.autoFocus}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  );
+                }}
               />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
-
-              <Input
-                id="username"
-                type="text"
-                required
-                ref={usernameRef}
-                value={registrationData.username}
-                onChange={(e) =>
-                  setRegistrationData((prev) => ({
-                    ...prev,
-                    username: e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                required
-                value={registrationData.password}
-                onChange={(e) =>
-                  setRegistrationData((prev) => ({
-                    ...prev,
-                    password: e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="confirm-password">Confirm Password</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                required
-                value={registrationData.confirmPassowrd}
-                onChange={(e) =>
-                  setRegistrationData((prev) => ({
-                    ...prev,
-                    confirmPassowrd: e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <Button type="submit" className="w-full" onClick={() => {}}>
-              Sign Up
-            </Button>
-          </div>
+            ))}
+          </FieldGroup>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
+        <Button
+          type="submit"
+          className="w-full hover:cursor-pointer"
+          form="registration-form"
+        >
+          Sign Up
+        </Button>
         <Button
           variant={"link"}
           onClick={() => {
             setMode("login");
           }}
+          className="hover:cursor-pointer"
         >
           Have an Account? Log in
         </Button>

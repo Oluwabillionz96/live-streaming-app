@@ -1,6 +1,7 @@
-import { Dispatch, SetStateAction, useState } from "react";
+// TODO: Input Error State
+
+import { Dispatch, SetStateAction } from "react";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import {
   Card,
   CardContent,
@@ -10,6 +11,13 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
+import { handleLogin } from "@/lib/utils";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import * as z from "zod";
+import { Login } from "@/lib/zod-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { loginFields } from "./auth-utils";
 
 const LoginForm = ({
   setMode,
@@ -18,10 +26,12 @@ const LoginForm = ({
   setMode: Dispatch<SetStateAction<"login" | "signup">>;
   setOpenForm: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [loginDetails, setLoginDetails] = useState({
-    email: "",
-    password: "",
+  const { handleSubmit, control } = useForm<z.infer<typeof Login>>({
+    resolver: zodResolver(Login),
   });
+  const onSubmit: SubmitHandler<z.infer<typeof Login>> = (data) => {
+    handleLogin(data, setOpenForm);
+  };
   return (
     <Card className="w-full md:max-w-md">
       <CardHeader className="flex justify-between items-center">
@@ -37,52 +47,40 @@ const LoginForm = ({
         </Button>
       </CardHeader>
       <CardContent>
-        {" "}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log({ loginDetails });
-          }}
-        >
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="johndoe123@gmail.com"
-                required
-                value={loginDetails.email}
-                onChange={(e) =>
-                  setLoginDetails((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }))
-                }
+        <form onSubmit={handleSubmit(onSubmit)} id="login-form">
+          <FieldGroup>
+            {loginFields.map((item, index) => (
+              <Controller
+                key={index}
+                name={item.name}
+                control={control}
+                render={({ field, fieldState }) => {
+                  console.log({ field, fieldState });
+                  return (
+                    <Field data-invalid={fieldState.invalid} className="gap-2">
+                      <FieldLabel htmlFor={item.id}>{item.label}</FieldLabel>
+                      <Input
+                        {...field}
+                        id={item.id}
+                        aria-invalid={fieldState.invalid}
+                        placeholder={item.placeHolder}
+                        autoFocus={item.autoFocus}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  );
+                }}
               />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                required
-                value={loginDetails.password}
-                onChange={(e) =>
-                  setLoginDetails((prev) => ({
-                    ...prev,
-                    password: e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Log In
-            </Button>
-          </div>
+            ))}
+          </FieldGroup>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
+        <Button type="submit" className="w-full" form="login-form">
+          Log In
+        </Button>
         <Button
           variant={"link"}
           onClick={() => {
