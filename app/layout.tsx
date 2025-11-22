@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
+import Layout from "@/components/auth/layout";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,8 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
-        <Toaster expand visibleToasts={2} duration={1000} />
+        <Layout>
+          {children}
+          <Toaster expand visibleToasts={2} duration={1000} />
+        </Layout>
       </body>
     </html>
   );
