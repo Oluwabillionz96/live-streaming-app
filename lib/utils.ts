@@ -5,33 +5,32 @@ import { Dispatch, SetStateAction } from "react";
 import { RegistrationData } from "./types";
 import * as z from "zod";
 import { toast } from "sonner";
+import { AuthError } from "@supabase/supabase-js";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const handleRegister = (
+export const handleRegister = async (
   data: RegistrationData,
+  signUp: (arg: RegistrationData) => Promise<{ error: AuthError } | undefined>,
   setOpen: Dispatch<SetStateAction<boolean>>
 ) => {
-  console.log({ registrationData: data });
-  setOpen(false);
-  toast.success("Registeration Successful");
+  try {
+    await signUp(data);
+    setOpen(false);
+    toast.success("Registeration Successful");
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-export function handleLogin(
-  data: Record<string, string>,
-  setOpen: Dispatch<SetStateAction<boolean>>
+export async function handleLogin(
+  data: z.infer<typeof Login>,
+  setOpen: Dispatch<SetStateAction<boolean>>,
+  signIn: (arg: z.infer<typeof Login>) => Promise<void>
 ) {
-  try {
-    const loginData = Login.parse(data);
-    console.log({ loginData });
-    setOpen(false);
-    toast.success("Login Successful");
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const message = error.issues[0].message;
-      toast.error(message);
-    }
-  }
+  await signIn(data);
+  setOpen(false);
+  toast.success("Login Successful");
 }

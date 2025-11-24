@@ -18,6 +18,7 @@ import { Login } from "@/lib/zod-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { loginFields } from "./auth-utils";
+import useAuthStore from "@/lib/store/auth-store";
 
 const LoginForm = ({
   setMode,
@@ -26,11 +27,22 @@ const LoginForm = ({
   setMode: Dispatch<SetStateAction<"login" | "signup">>;
   setOpenForm: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { handleSubmit, control } = useForm<z.infer<typeof Login>>({
+  const {
+    handleSubmit,
+    control,
+    formState: { isSubmitting },
+  } = useForm<z.infer<typeof Login>>({
     resolver: zodResolver(Login),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
+
+  const signIn = useAuthStore((store) => store.signIn);
+
   const onSubmit: SubmitHandler<z.infer<typeof Login>> = (data) => {
-    handleLogin(data, setOpenForm);
+    handleLogin(data, setOpenForm, signIn);
   };
   return (
     <Card className="w-full md:max-w-md">
@@ -55,7 +67,6 @@ const LoginForm = ({
                 name={item.name}
                 control={control}
                 render={({ field, fieldState }) => {
-                  console.log({ field, fieldState });
                   return (
                     <Field data-invalid={fieldState.invalid} className="gap-2">
                       <FieldLabel htmlFor={item.id}>{item.label}</FieldLabel>
@@ -65,6 +76,7 @@ const LoginForm = ({
                         aria-invalid={fieldState.invalid}
                         placeholder={item.placeHolder}
                         autoFocus={item.autoFocus}
+                        type={item.inputType}
                       />
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
@@ -78,8 +90,13 @@ const LoginForm = ({
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-2">
-        <Button type="submit" className="w-full" form="login-form">
-          Log In
+        <Button
+          type="submit"
+          className="w-full disabled:opacity-50 disabled:cursor-not-allowed hover:cursor-pointer"
+          form="login-form"
+          disabled={isSubmitting}
+        >
+          {!isSubmitting ? "Log In" : "Processing..."}
         </Button>
         <Button
           variant={"link"}
