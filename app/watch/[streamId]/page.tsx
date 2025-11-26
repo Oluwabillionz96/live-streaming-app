@@ -7,7 +7,6 @@ import {
   Heart,
   Users,
   Share2,
-  Settings,
   Send,
   ChevronRight,
   ChevronLeft,
@@ -96,21 +95,21 @@ export default function WatchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)]">
+    <div className="min-h-screen bg-var(--color-background)">
       {/* Top Bar */}
-      <div className="bg-[var(--color-surface)] border-b border-[var(--color-border)] px-8 py-5">
+      <div className="bg-(--color-surface) border-b border-var(--color-border) px-8 py-5">
         <div className="flex items-center gap-6">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => {}}
-            className="hover:bg-[var(--color-surface-hover)] size-12"
+            className="hover:bg-var(--color-surface-hover) size-12"
           >
             <ArrowLeft className="size-5" />
           </Button>
           <div className="flex items-center gap-4">
-            <div className="size-10 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] flex items-center justify-center">
-              <div className="size-6 rounded bg-[var(--color-surface)]" />
+            <div className="size-10 rounded-lg bg-linear-to-br from-(--color-primary) to-(--color-accent) flex items-center justify-center">
+              <div className="size-6 rounded bg-(--color-surface)" />
             </div>
             <span>StreamHub</span>
           </div>
@@ -138,14 +137,14 @@ export default function WatchPage() {
             </div>
             <div className="absolute top-6 right-6 flex gap-3">
               <div className="bg-black/80 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
-                <Users className="size-5 text-[var(--color-live)]" />
+                <Users className="size-5 text-(--color-live)" />
                 <span>12,453</span>
               </div>
             </div>
           </div>
 
           {/* Stream Info */}
-          <div className="bg-[var(--color-surface)] border-b border-[var(--color-border)] p-8">
+          <div className="bg-(--color-surface) border-b border-(--color-border) p-8">
             <div className="flex items-start justify-between gap-6 mb-6">
               <div className="flex-1">
                 <h2 className="mb-4">Pro Tournament Finals - Epic Gameplay</h2>
@@ -156,7 +155,7 @@ export default function WatchPage() {
                   </Avatar>
                   <div>
                     <h4>ProGamer_X</h4>
-                    <p className="text-sm text-[var(--color-text-secondary)]">
+                    <p className="text-sm text-(--color-text-secondary)">
                       45.2K followers
                     </p>
                   </div>
@@ -168,8 +167,8 @@ export default function WatchPage() {
                   variant={isFollowing ? "outline" : "default"}
                   className={
                     isFollowing
-                      ? "border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] h-12 px-6"
-                      : "bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] h-12 px-6"
+                      ? "border-(--color-border) hover:bg-(--color-surface-hover) h-12 px-6"
+                      : "bg-(--color-primary) hover:bg-(--color-primary-hover) h-12 px-6"
                   }
                   onClick={() => setIsFollowing(!isFollowing)}
                 >
@@ -183,7 +182,7 @@ export default function WatchPage() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] size-12"
+                  className="border-(--color-border) hover:bg-(--color-surface-hover) size-12"
                 >
                   <Share2 className="size-4" />
                 </Button>
@@ -193,25 +192,25 @@ export default function WatchPage() {
             <div className="flex flex-wrap gap-3">
               <Badge
                 variant="secondary"
-                className="bg-[var(--color-surface-elevated)] px-4 py-2"
+                className="bg-(--color-surface-elevated) px-4 py-2"
               >
                 Gaming
               </Badge>
               <Badge
                 variant="secondary"
-                className="bg-[var(--color-surface-elevated)] px-4 py-2"
+                className="bg-(--color-surface-elevated) px-4 py-2"
               >
                 Tournament
               </Badge>
               <Badge
                 variant="secondary"
-                className="bg-[var(--color-surface-elevated)] px-4 py-2"
+                className="bg-(--color-surface-elevated) px-4 py-2"
               >
                 Pro Player
               </Badge>
               <Badge
                 variant="secondary"
-                className="bg-[var(--color-surface-elevated)] px-4 py-2"
+                className="bg-(--color-surface-elevated) px-4 py-2"
               >
                 Competitive
               </Badge>
@@ -219,9 +218,9 @@ export default function WatchPage() {
           </div>
 
           {/* Description */}
-          <div className="bg-[var(--color-surface)] p-8 flex-1 overflow-auto">
+          <div className="bg-(--color-surface) p-8 flex-1 overflow-auto">
             <h4 className="mb-3">About this stream</h4>
-            <p className="text-[var(--color-text-secondary)] leading-relaxed">
+            <p className="text-(--color-text-secondary) leading-relaxed">
               Welcome to the grand finals! Today we&apos;re competing for the
               championship title in one of the most anticipated tournaments of
               the year. Stick around for incredible plays, expert commentary,
@@ -233,18 +232,18 @@ export default function WatchPage() {
 
         {/* Chat Panel */}
         <div
-          className={`fixed lg:fixed right-0 top-[81px] h-[calc(100vh-81px)] w-full lg:w-[450px] bg-[var(--color-surface)] border-l border-[var(--color-border)] flex flex-col transition-transform duration-300 ${
+          className={`fixed lg:fixed right-0 top-[81px] h-[calc(100vh-81px)] w-full lg:w-[450px] bg-(--color-surface) border-l border-(--color-border) flex flex-col transition-transform duration-300 ${
             isChatOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
           {/* Chat Header */}
-          <div className="p-6 border-b border-[var(--color-border)] flex items-center justify-between">
+          <div className="p-6 border-b border-(--color-border) flex items-center justify-between">
             <h4>Live Chat</h4>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsChatOpen(false)}
-              className="hover:bg-[var(--color-surface-hover)] size-10"
+              className="hover:bg-(--color-surface-hover) size-10"
             >
               <ChevronRight className="size-5" />
             </Button>
@@ -255,18 +254,18 @@ export default function WatchPage() {
             <div className="space-y-6">
               {messages.map((msg) => (
                 <div key={msg.id} className="flex gap-4">
-                  <Avatar className="size-10 flex-shrink-0">
+                  <Avatar className="size-10 shrink-0">
                     <AvatarImage src={msg.avatar} />
                     <AvatarFallback>{msg.username[0]}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-3 mb-1">
                       <span className="truncate">{msg.username}</span>
-                      <span className="text-xs text-[var(--color-text-tertiary)] flex-shrink-0">
+                      <span className="text-xs text-(--color-text-tertiary) shrink-0">
                         {msg.timestamp}
                       </span>
                     </div>
-                    <p className="text-sm text-[var(--color-text-secondary)] break-words">
+                    <p className="text-sm text-(--color-text-secondary) wrap-break-word">
                       {msg.message}
                     </p>
                   </div>
@@ -276,19 +275,19 @@ export default function WatchPage() {
           </ScrollArea>
 
           {/* Chat Input */}
-          <div className="p-6 border-t border-[var(--color-border)]">
+          <div className="p-6 border-t border-(--color-border)">
             <div className="flex gap-3">
               <Input
                 placeholder="Send a message..."
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                className="bg-[var(--color-surface-elevated)] border-[var(--color-border)] h-12"
+                className="bg-(--color-surface-elevated) border-(--color-border) h-12"
               />
               <Button
                 size="icon"
                 onClick={handleSendMessage}
-                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] flex-shrink-0 size-12"
+                className="bg-(--color-primary) hover:bg-(--color-primary-hover) shrink-0 size-12"
               >
                 <Send className="size-5" />
               </Button>
@@ -299,7 +298,7 @@ export default function WatchPage() {
         {/* Chat Toggle Button (when closed) */}
         {!isChatOpen && (
           <Button
-            className="fixed right-6 bottom-6 lg:bottom-auto lg:top-32 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] shadow-lg z-50 h-12 px-6"
+            className="fixed right-6 bottom-6 lg:bottom-auto lg:top-32 bg-(--color-primary) hover:bg-(--color-primary-hover) shadow-lg z-50 h-12 px-6"
             onClick={() => setIsChatOpen(true)}
           >
             <ChevronLeft className="size-5 mr-2" />

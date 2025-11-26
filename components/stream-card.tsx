@@ -1,8 +1,9 @@
 // import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Eye, Users } from "lucide-react";
+// import { Eye, Users } from "lucide-react";
 import ImageWithFallback from "./image-with-fallback";
+import { Users } from "lucide-react";
 
 interface StreamCardProps {
   thumbnail: string;
@@ -30,7 +31,7 @@ export default function StreamCard({
       className="group cursor-pointer transition-all duration-200 hover:scale-[1.02]"
       onClick={onClick}
     >
-      <div className="relative aspect-video rounded-lg overflow-hidden bg-[var(--color-surface)]">
+      <div className="relative aspect-video rounded-lg overflow-hidden bg-(--color-surface)">
         <ImageWithFallback
           src={thumbnail}
           alt={title}
@@ -50,19 +51,23 @@ export default function StreamCard({
       </div>
 
       <div className="mt-3 flex gap-3">
-        <Avatar className="size-10 flex-shrink-0">
-          <AvatarImage src={creatorAvatar} alt={creatorName} />
+        <Avatar className="size-10 shrink-0">
+          <AvatarImage
+            src={creatorAvatar}
+            alt={creatorName}
+            className="object-cover"
+          />
           <AvatarFallback>{creatorName[0]}</AvatarFallback>
         </Avatar>
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-[var(--color-text-primary)] truncate group-hover:text-[var(--color-primary-light)] transition-colors">
+          <h3 className="text-(--color-text-primary) truncate group-hover:text-(--color-primary-light) transition-colors">
             {title}
           </h3>
-          <p className="text-sm text-[var(--color-text-secondary)] truncate">
+          <p className="text-sm text-(--color-text-secondary) truncate">
             {creatorName}
           </p>
-          <p className="text-sm text-[var(--color-text-tertiary)]">
+          <p className="text-sm text-(--color-text-tertiary)">
             {category}
           </p>
         </div>
