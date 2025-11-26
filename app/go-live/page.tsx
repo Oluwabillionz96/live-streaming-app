@@ -22,6 +22,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Eye, Lock, Radio, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function GoLivePage() {
@@ -42,6 +43,8 @@ export default function GoLivePage() {
     });
   };
 
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-(--color-background)">
       {/* Top Bar */}
@@ -50,8 +53,8 @@ export default function GoLivePage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => {}}
-            className="hover:bg-(--color-surface-hover) size-12"
+            onClick={() => router.back()}
+            className="hover:bg-(--color-surface-hover) hover:text-white size-12"
           >
             <ArrowLeft className="size-5" />
           </Button>
@@ -139,7 +142,10 @@ export default function GoLivePage() {
 
                 {/* Thumbnail Upload */}
                 <div className="space-y-3">
-                  <Label>Stream Thumbnail</Label>
+                  <Label className="text-(--color-text-secondary)">
+                    Stream Thumbnail
+                  </Label>
+                  <Input type="file" className="hidden" />
                   <div className="border-2 border-dashed border-(--color-border) rounded-lg p-10 text-center hover:border-(--color-border-strong) transition-colors cursor-pointer">
                     <Upload className="size-14 mx-auto mb-4 text-(--color-text-tertiary)" />
                     <p className="text-sm text-(--color-text-secondary) mb-2">
@@ -160,7 +166,10 @@ export default function GoLivePage() {
                       <Lock className="size-6 text-(--color-text-tertiary)" />
                     )}
                     <div>
-                      <Label htmlFor="privacy" className="cursor-pointer">
+                      <Label
+                        htmlFor="privacy"
+                        className="cursor-pointer text-(--color-text-secondary)"
+                      >
                         {isPublic ? "Public Stream" : "Private Stream"}
                       </Label>
                       <p className="text-xs text-(--color-text-tertiary) mt-1">
@@ -182,7 +191,9 @@ export default function GoLivePage() {
             {/* Stream Key Card */}
             <Card className="bg-(--color-surface) border-(--color-border)">
               <CardHeader>
-                <CardTitle>Stream Key</CardTitle>
+                <CardTitle className="text-(--color-text-secondary)">
+                  Stream Key
+                </CardTitle>
                 <CardDescription className="text-(--color-text-secondary)">
                   Use this key in your streaming software
                 </CardDescription>
@@ -192,10 +203,10 @@ export default function GoLivePage() {
                   <Input
                     value="sk_live_xxxxxxxxxxxxxxxxxxxxxxxx"
                     readOnly
-                    className="bg-(--color-surface-elevated) border-(--color-border) font-mono text-sm h-12"
+                    className="bg-(--color-surface-elevated) border-(--color-border) text-(--color-text-secondary) font-mono text-sm h-12"
                   />
                   <Button
-                    variant="outline"
+                    variant={"link"}
                     className="border-(--color-border) hover:bg-(--color-surface-hover) h-12 px-6"
                   >
                     Copy
@@ -212,7 +223,9 @@ export default function GoLivePage() {
           <div className="space-y-8">
             <Card className="bg-(--color-surface) border-(--color-border)">
               <CardHeader className="pb-6">
-                <CardTitle>Stream Preview</CardTitle>
+                <CardTitle className="text-(--color-text-secondary)">
+                  Stream Preview
+                </CardTitle>
                 <CardDescription className="text-(--color-text-secondary)">
                   This is how your stream will appear to viewers
                 </CardDescription>
@@ -253,7 +266,7 @@ export default function GoLivePage() {
 
                 {/* Preview Info */}
                 <div>
-                  <h3 className="mb-3 truncate">
+                  <h3 className="mb-3 truncate text-(--color-text-secondary)">
                     {streamTitle || "Your stream title will appear here"}
                   </h3>
                   <p className="text-sm text-(--color-text-secondary) mb-4">
