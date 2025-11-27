@@ -1,19 +1,8 @@
 "use client";
 
-import ImageWithFallback from "@/components/image-with-fallback";
+
 import PreviewPanel from "@/components/preview-panel";
 import SetUpForm from "@/components/set-up-form";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
-import { Lock, Radio } from "lucide-react";
 import { useState } from "react";
 
 export default function GoLivePage() {

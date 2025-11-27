@@ -15,12 +15,12 @@ interface StatCardProps {
 
 function StatCard({ title, value, change, icon, trend }: StatCardProps) {
   return (
-    <Card className="bg-[var(--color-surface)] border-[var(--color-border)]">
+    <Card className="bg-(--color-surface) border-(--color-border)">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm text-[var(--color-text-secondary)]">
+        <CardTitle className="text-sm text-(--color-text-secondary)">
           {title}
         </CardTitle>
-        <div className="text-[var(--color-text-tertiary)]">{icon}</div>
+        <div className="text-(--color-text-tertiary)">{icon}</div>
       </CardHeader>
       <CardContent>
         <div className="text-2xl mb-1">{value}</div>
@@ -28,8 +28,8 @@ function StatCard({ title, value, change, icon, trend }: StatCardProps) {
           <p
             className={`text-xs ${
               trend === "up"
-                ? "text-[var(--color-success)]"
-                : "text-[var(--color-error)]"
+                ? "text-(--color-success)"
+                : "text-(--color-error)"
             }`}
           >
             {change}
@@ -43,7 +43,6 @@ function StatCard({ title, value, change, icon, trend }: StatCardProps) {
 const DashboardOverview
  = () => {
   const [activeTab, setActiveTab] = useState("overview");
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
     return (
       // <div className="flex">
@@ -82,7 +81,7 @@ const DashboardOverview
   
             {/* Quick Actions */}
             <div className="mb-12">
-              <Card className="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] border-0 text-white">
+              <Card className="bg-linear-to-br from-(--color-primary) to-(--color-accent) border-0 text-white">
                 <CardHeader className="pb-6">
                   <CardTitle>Ready to go live?</CardTitle>
                   <CardDescription className="text-white/90">
@@ -92,7 +91,7 @@ const DashboardOverview
                 <CardContent>
                   <Button
                     size="lg"
-                    className="bg-white text-[var(--color-primary)] hover:bg-white/90 h-12 px-6"
+                    className="bg-white text-(--color-primary) hover:bg-white/90 h-12 px-6"
                     onClick={() => {}}
                   >
                     <Radio className="size-5 mr-2" />
@@ -108,7 +107,7 @@ const DashboardOverview
                 <h3>Upcoming Streams</h3>
                 <Button
                   variant="ghost"
-                  className="hover:bg-[var(--color-surface-hover)] h-11"
+                  className="hover:bg-(--color-surface-hover) h-11"
                 >
                   View All
                 </Button>
@@ -118,24 +117,24 @@ const DashboardOverview
                 {upcomingStreams.map((stream) => (
                   <Card
                     key={stream.id}
-                    className="bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--color-border-strong)] transition-colors cursor-pointer"
+                    className="bg-(--color-surface) border-(--color-border) hover:border-(--color-border-strong) transition-colors cursor-pointer"
                   >
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-5">
-                          <div className="size-14 rounded-lg bg-[var(--color-surface-elevated)] flex items-center justify-center">
-                            <Calendar className="size-7 text-[var(--color-primary)]" />
+                          <div className="size-14 rounded-lg bg-(--color-surface-elevated) flex items-center justify-center">
+                            <Calendar className="size-7 text-(--color-primary)" />
                           </div>
                           <div>
                             <h4 className="mb-1">{stream.title}</h4>
-                            <p className="text-sm text-[var(--color-text-secondary)]">
+                            <p className="text-sm text-(--color-text-secondary)">
                               {stream.scheduledFor}
                             </p>
                           </div>
                         </div>
                         <Badge
                           variant="secondary"
-                          className="bg-[var(--color-surface-elevated)] px-4 py-2"
+                          className="bg-(--color-surface-elevated) px-4 py-2"
                         >
                           {stream.category}
                         </Badge>
@@ -151,7 +150,7 @@ const DashboardOverview
         {activeTab === "streams" && (
           <div>
             <h2 className="mb-6">Past Streams</h2>
-            <p className="text-[var(--color-text-secondary)]">
+            <p className="text-(--color-text-secondary)">
               Your stream history will appear here.
             </p>
           </div>
@@ -160,7 +159,7 @@ const DashboardOverview
         {activeTab === "analytics" && (
           <div>
             <h2 className="mb-6">Analytics</h2>
-            <p className="text-[var(--color-text-secondary)]">
+            <p className="text-(--color-text-secondary)">
               Detailed analytics and insights coming soon.
             </p>
           </div>
