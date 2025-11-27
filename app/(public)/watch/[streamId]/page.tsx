@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 
-import { Heart, Users, Share2, ChevronLeft, Radio } from "lucide-react";
+import {
+  Heart,
+  Users,
+  Share2,
+  ChevronLeft,
+  Radio,
+  MessageCircleIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ImageWithFallback from "@/components/image-with-fallback";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChatMessage } from "@/lib/types";
 import { mockMessages } from "@/lib/utils";
 import ChatPanel from "@/components/chat-panel";
+import VideoPlayer from "@/components/video-player";
 
 export default function WatchPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -44,26 +52,7 @@ export default function WatchPage() {
           isChatOpen ? "lg:mr-[450px]" : ""
         }`}
       >
-        {/* Video Player */}
-        <div className="relative bg-black aspect-video lg:aspect-auto lg:flex-1">
-          <ImageWithFallback
-            src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1920&q=80"
-            alt="Stream"
-            className="w-full h-full object-contain"
-          />
-          <div className="absolute top-6 left-6">
-            <Badge className="live-badge px-4 py-2 uppercase tracking-wide">
-              <span className="hidden md:inline">Live</span>
-              <Radio className="md:hidden" />
-            </Badge>
-          </div>
-          <div className="absolute top-6 right-6 flex gap-3">
-            <div className="bg-black/80 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
-              <Users className="size-5 text-(--color-live)" />
-              <span>12,453</span>
-            </div>
-          </div>
-        </div>
+        <VideoPlayer />
 
         {/* Stream Info */}
         <div className="bg-(--color-surface) border-b border-(--color-border) p-8">
@@ -156,8 +145,11 @@ export default function WatchPage() {
           className="fixed right-6 bottom-6 lg:bottom-auto lg:top-32 bg-(--color-primary) hover:bg-(--color-primary-hover) shadow-lg z-50 h-12 px-6"
           onClick={() => setIsChatOpen(true)}
         >
-          <ChevronLeft className="size-5 mr-2" />
-          Open Chat
+          <span className="hidden md:flex">
+            <ChevronLeft className="size-5 mr-2" />
+            Open Chat
+          </span>
+          <MessageCircleIcon className="md:hidden" />
         </Button>
       )}
     </>
