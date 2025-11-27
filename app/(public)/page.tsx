@@ -6,7 +6,6 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <>
-      {" "}
       <div className="mb-8">
         <h2 className="mb-2">Live Now</h2>
         <p className="text-(--color-text-secondary)">
