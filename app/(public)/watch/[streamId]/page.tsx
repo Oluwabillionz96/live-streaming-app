@@ -89,7 +89,7 @@ export default function WatchPage() {
               </div>
             </div>
 
-            <div className="flex gap-3 w-full">
+            <div className="flex gap-3 w-full md:w-fit">
               <Button
                 variant={isFollowing ? "outline" : "default"}
                 className={
