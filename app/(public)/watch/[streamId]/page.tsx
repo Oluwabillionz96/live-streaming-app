@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import {
-  ArrowLeft,
   Heart,
   Users,
   Share2,
@@ -19,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatMessage } from "@/lib/types";
 import { mockMessages } from "@/lib/utils";
+import ChatPanel from "@/components/chat-panel";
 
 export default function WatchPage() {
   const [isChatOpen, setIsChatOpen] = useState(true);
@@ -79,7 +79,10 @@ export default function WatchPage() {
               <h2 className="mb-4">Pro Tournament Finals - Epic Gameplay</h2>
               <div className="flex items-center gap-4">
                 <Avatar className="size-14">
-                  <AvatarImage src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80" />
+                  <AvatarImage
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80"
+                    className="object-cover"
+                  />
                   <AvatarFallback>PG</AvatarFallback>
                 </Avatar>
                 <div>
@@ -158,69 +161,14 @@ export default function WatchPage() {
       </div>
 
       {/* Chat Panel */}
-      <div
-        className={`fixed lg:fixed right-0 top-[81px] h-[calc(100vh-81px)] w-full lg:w-[450px] bg-(--color-surface) border-l border-(--color-border) flex flex-col transition-transform duration-300 ${
-          isChatOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        {/* Chat Header */}
-        <div className="p-6 border-b border-(--color-border) flex items-center justify-between">
-          <h4>Live Chat</h4>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsChatOpen(false)}
-            className="hover:bg-(--color-surface-hover) size-10"
-          >
-            <ChevronRight className="size-5" />
-          </Button>
-        </div>
-
-        {/* Messages */}
-        <ScrollArea className="flex-1 p-6">
-          <div className="space-y-6">
-            {messages.map((msg) => (
-              <div key={msg.id} className="flex gap-4">
-                <Avatar className="size-10 shrink-0">
-                  <AvatarImage src={msg.avatar} />
-                  <AvatarFallback>{msg.username[0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-3 mb-1">
-                    <span className="truncate">{msg.username}</span>
-                    <span className="text-xs text-(--color-text-tertiary) shrink-0">
-                      {msg.timestamp}
-                    </span>
-                  </div>
-                  <p className="text-sm text-(--color-text-secondary) wrap-break-word">
-                    {msg.message}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-
-        {/* Chat Input */}
-        <div className="p-6 border-t border-(--color-border)">
-          <div className="flex gap-3">
-            <Input
-              placeholder="Send a message..."
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-              className="bg-(--color-surface-elevated) border-(--color-border) h-12"
-            />
-            <Button
-              size="icon"
-              onClick={handleSendMessage}
-              className="bg-(--color-primary) hover:bg-(--color-primary-hover) shrink-0 size-12"
-            >
-              <Send className="size-5" />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <ChatPanel
+        isChatOpen={isChatOpen}
+        setIsChatOpen={setIsChatOpen}
+        messages={messages}
+        chatInput={chatInput}
+        setChatInput={setChatInput}
+        handleSendMessage={handleSendMessage}
+      />
 
       {/* Chat Toggle Button (when closed) */}
       {!isChatOpen && (

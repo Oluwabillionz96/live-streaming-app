@@ -37,16 +37,7 @@ const Header = ({
           </div>
 
           <div className="flex items-center gap-4">
-            {!isDashboard ? (
-              <Link href={"/go-live"}>
-                <Button
-                  variant="default"
-                  className="bg-(--color-primary) hover:bg-(--color-primary-hover) hover:cursor-pointer h-12 px-6"
-                >
-                  Go Live
-                </Button>
-              </Link>
-            ) : (
+            {isDashboard ? (
               <Link href={"/"}>
                 <Button
                   variant="default"
@@ -55,6 +46,19 @@ const Header = ({
                   View Channel
                 </Button>
               </Link>
+            ) : (
+              <>
+                {!isWatch && (
+                  <Link href={"/go-live"}>
+                    <Button
+                      variant="default"
+                      className="bg-(--color-primary) hover:bg-(--color-primary-hover) hover:cursor-pointer h-12 px-6"
+                    >
+                      Go Live
+                    </Button>
+                  </Link>
+                )}
+              </>
             )}
             <Link href={"/dashboard/overview"} className="hover:cursor-pointer">
               <Avatar className="size-12 cursor-pointer hover:ring-2 ring-(--color-primary) transition-all">
