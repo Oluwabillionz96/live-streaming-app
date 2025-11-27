@@ -9,3 +9,11 @@ export interface UpcomingStream {
   scheduledFor: string;
   category: string;
 }
+
+export interface ChatMessage {
+  id: number;
+  username: string;
+  avatar: string;
+  message: string;
+  timestamp: string;
+}

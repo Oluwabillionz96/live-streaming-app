@@ -2,13 +2,32 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const Header = ({ isDashboard }: { isDashboard: boolean }) => {
+const Header = ({
+  isDashboard,
+  isWatch,
+}: {
+  isDashboard: boolean;
+  isWatch: boolean;
+}) => {
+  const router = useRouter();
   return (
     <header className="fixed top-0 left-0 right-0 w-full bg-background z-50">
       <nav className="top-0 z-50 bg-(--color-surface) border-b border-(--color-border) ">
         <div className="max-w-[1920px] w-full mx-auto px-8 py-5 flex items-center justify-between">
           <div className="flex items-center gap-4">
+            {isWatch && (
+              <Button
+                size={"icon"}
+                variant={"ghost"}
+                className="hover:bg-white/10 cursor-pointer hover:text-white"
+                onClick={() => router.back()}
+              >
+                <ArrowLeft />
+              </Button>
+            )}
             <div className="size-10 rounded-lg bg-linear-to-br from-(--color-primary) to-(--color-accent) flex items-center justify-center">
               <div className="size-6 rounded bg-(--color-surface)" />
             </div>

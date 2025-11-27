@@ -33,8 +33,8 @@ const SideBar = () => {
                 className={`md:w-full w-fit justify-start gap-4 h-12 px-6 ${
                   isActive
                     ? "bg-(--color-primary) hover:bg-(--color-primary-hover)"
-                    : "hover:bg-(--color-surface-hover)"
-                }`}
+                    : "hover:bg-(--color-surface-hover) hover:text-white"
+                } hover:cursor-pointer`}
               >
                 <Icon className="size-5" />
                 <span className="hidden md:block">{item.label}</span>

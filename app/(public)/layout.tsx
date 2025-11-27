@@ -9,9 +9,10 @@ const HomePageLayput = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
 
   const isDashboard = pathname.startsWith("/dashboard");
+  const isWatch = pathname.startsWith("/watch");
   return (
     <div className="min-h-screen bg-color-background">
-      <Header isDashboard={isDashboard} />
+      <Header isDashboard={isDashboard} isWatch={isWatch} />
       {isDashboard ? <SideBar /> : null}
       <main
         className={`max-w-[1920px] ${

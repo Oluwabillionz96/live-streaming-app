@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Login } from "./zod-schema";
 import { Dispatch, SetStateAction } from "react";
-import { RegistrationData, UpcomingStream } from "./types";
+import { ChatMessage, RegistrationData, UpcomingStream } from "./types";
 import * as z from "zod";
 import { toast } from "sonner";
 import { AuthError } from "@supabase/supabase-js";
@@ -144,5 +144,49 @@ export const upcomingStreams: UpcomingStream[] = [
     title: "Tutorial: Advanced Strategies",
     scheduledFor: "Sunday at 2:00 PM",
     category: "Educational",
+  },
+];
+
+
+export const mockMessages: ChatMessage[] = [
+  {
+    id: 1,
+    username: "GamerFan123",
+    avatar:
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80",
+    message: "This is amazing! 🔥",
+    timestamp: "2:34 PM",
+  },
+  {
+    id: 2,
+    username: "StreamLover",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
+    message: "Great content as always!",
+    timestamp: "2:35 PM",
+  },
+  {
+    id: 3,
+    username: "ProPlayer_X",
+    avatar:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80",
+    message: "How did you pull that off?",
+    timestamp: "2:36 PM",
+  },
+  {
+    id: 4,
+    username: "ChatMaster",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
+    message: "New follower here! Love the stream",
+    timestamp: "2:37 PM",
+  },
+  {
+    id: 5,
+    username: "EliteGamer",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
+    message: "Can you show that strategy again?",
+    timestamp: "2:38 PM",
   },
 ];
