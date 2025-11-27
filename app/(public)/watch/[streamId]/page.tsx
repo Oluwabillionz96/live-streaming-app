@@ -2,29 +2,21 @@
 
 import { useState } from "react";
 
-import {
-  Heart,
-  Users,
-  Share2,
-  Send,
-  ChevronRight,
-  ChevronLeft,
-} from "lucide-react";
+import { Heart, Users, Share2, ChevronLeft, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ImageWithFallback from "@/components/image-with-fallback";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatMessage } from "@/lib/types";
 import { mockMessages } from "@/lib/utils";
 import ChatPanel from "@/components/chat-panel";
 
 export default function WatchPage() {
-  const [isChatOpen, setIsChatOpen] = useState(true);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState(mockMessages);
+  const badges = [" Gaming", "Tournament", "Pro Player", "Competitive"];
 
   const handleSendMessage = () => {
     if (!chatInput.trim()) return;
@@ -61,7 +53,8 @@ export default function WatchPage() {
           />
           <div className="absolute top-6 left-6">
             <Badge className="live-badge px-4 py-2 uppercase tracking-wide">
-              Live
+              <span className="hidden md:inline">Live</span>
+              <Radio className="md:hidden" />
             </Badge>
           </div>
           <div className="absolute top-6 right-6 flex gap-3">
@@ -74,9 +67,11 @@ export default function WatchPage() {
 
         {/* Stream Info */}
         <div className="bg-(--color-surface) border-b border-(--color-border) p-8">
-          <div className="flex items-start justify-between gap-6 mb-6">
+          <div className="flex  flex-col md:flex-row items-start justify-between gap-8 md:gap-6 mb-6">
             <div className="flex-1">
-              <h2 className="mb-4">Pro Tournament Finals - Epic Gameplay</h2>
+              <h2 className="mb-4 text-xs">
+                Pro Tournament Finals - Epic Gameplay
+              </h2>
               <div className="flex items-center gap-4">
                 <Avatar className="size-14">
                   <AvatarImage
@@ -94,13 +89,13 @@ export default function WatchPage() {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 w-full">
               <Button
                 variant={isFollowing ? "outline" : "default"}
                 className={
                   isFollowing
-                    ? "border-(--color-border) hover:bg-(--color-surface-hover) h-12 px-6"
-                    : "bg-(--color-primary) hover:bg-(--color-primary-hover) h-12 px-6"
+                    ? "border-(--color-border) hover:bg-(--color-surface-hover) "
+                    : "bg-(--color-primary) hover:bg-(--color-primary-hover) h-12 px-6 flex-1"
                 }
                 onClick={() => setIsFollowing(!isFollowing)}
               >
@@ -120,30 +115,15 @@ export default function WatchPage() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <Badge
-              variant="secondary"
-              className="bg-(--color-surface-elevated) px-4 py-2"
-            >
-              Gaming
-            </Badge>
-            <Badge
-              variant="secondary"
-              className="bg-(--color-surface-elevated) px-4 py-2"
-            >
-              Tournament
-            </Badge>
-            <Badge
-              variant="secondary"
-              className="bg-(--color-surface-elevated) px-4 py-2"
-            >
-              Pro Player
-            </Badge>
-            <Badge
-              variant="secondary"
-              className="bg-(--color-surface-elevated) px-4 py-2"
-            >
-              Competitive
-            </Badge>
+            {badges.map((item, index) => (
+              <Badge
+                key={index}
+                variant="secondary"
+                className="bg-(--color-surface-elevated) px-4 py-2 text-white"
+              >
+                {item}
+              </Badge>
+            ))}
           </div>
         </div>
 

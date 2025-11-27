@@ -72,7 +72,7 @@ const ChatPanel = ({
             placeholder="Send a message..."
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
             className="bg-(--color-surface-elevated) border-(--color-border) h-12"
           />
           <Button
