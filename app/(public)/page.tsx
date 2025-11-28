@@ -2,7 +2,6 @@
 import StreamCard from "@/components/stream-card";
 import useAuthStore from "@/lib/store/auth-store";
 import { mockStreams } from "@/lib/utils";
-import { Stats } from "fs";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

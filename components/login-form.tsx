@@ -1,6 +1,5 @@
-import React, { Dispatch, FormEvent, SetStateAction } from "react";
-import { Label } from "./ui/label";
-import { Lock, Mail } from "lucide-react";
+"use client";
+
 import { Input } from "./ui/input";
 import * as z from "zod";
 import { Login } from "@/lib/zod-schema";

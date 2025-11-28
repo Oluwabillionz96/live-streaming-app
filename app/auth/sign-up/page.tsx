@@ -1,7 +1,3 @@
-"use client";
-
-import { useState } from "react";
-
 import {
   Card,
   CardContent,
@@ -16,18 +12,6 @@ import RegistrationForm from "@/components/registration-form";
 import AuthFormAltSide from "@/components/auth-form-alt-side";
 
 export default function SignupPage() {
-  const [registrationDetails, setRegistrationDetails] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Signup with:", { registrationDetails });
-  };
-
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex">
       <AuthFormAltSide>

@@ -1,6 +1,5 @@
-"use client";
 
-import { useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -14,15 +13,6 @@ import Link from "next/link";
 import LoginForm from "@/components/login-form";
 
 export default function LoginPage() {
-  const [loginDetails, setLoginDetails] = useState({ email: "", password: "" });
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle login logic
-    console.log("Login with:", { loginDetails });
-    // onNavigate?.("home");
-  };
-
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex">
       {/* Left Side - Form */}
