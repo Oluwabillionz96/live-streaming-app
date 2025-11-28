@@ -5,7 +5,8 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 import { RegistrationSchema } from "@/lib/zod-schema";
-import { registrationFields } from "@/lib/auth-utils";
+import { handleRegister, registrationFields } from "@/lib/auth-utils";
+import useAuthStore from "@/lib/store/auth-store";
 
 const RegistrationForm = () => {
   const { control, handleSubmit } = useForm<RegistrationData>({
@@ -18,8 +19,10 @@ const RegistrationForm = () => {
     },
   });
 
-  function onSubmit(data: RegistrationData) {
-    console.log({ data });
+  const signUp = useAuthStore((state) => state.signUp);
+
+  async function onSubmit(data: RegistrationData) {
+    await handleRegister(data, signUp);
   }
 
   return (

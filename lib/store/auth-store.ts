@@ -3,36 +3,61 @@
 import { create } from "zustand";
 import { supabase } from "../supabase-client";
 import { RegistrationData } from "../types";
-import { AuthError, Session } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import * as z from "zod";
 import { Login } from "../zod-schema";
 
 type AuthStore = {
   session: null | Session;
-  signUp: (arg: RegistrationData) => Promise<{ error: AuthError } | undefined>;
+  signUp: (
+    arg: RegistrationData
+  ) => Promise<
+    | { success: boolean; message: string }
+    | { success: boolean; message?: undefined }
+  >;
   updateSession: (arg: null | Session) => void;
   signOut: () => Promise<void>;
-  signIn: (arg: z.infer<typeof Login>) => Promise<void>;
+  signIn: (
+    arg: z.infer<typeof Login>
+  ) => Promise<
+    | { success: boolean; message: string }
+    | { success: boolean; message?: undefined }
+  >;
 };
 
 const useAuthStore = create<AuthStore>((set) => ({
   session: null,
   signUp: async (payload) => {
-    const { error } = await supabase.auth.signUp({
-      email: payload.email,
-      password: payload.password,
-      options: {
-        data: {
-          username: payload.username,
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: payload.email,
+        password: payload.password,
+        options: {
+          data: {
+            username: payload.username,
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
-      console.error("Sign up error: ", error);
-      return { error };
+      if (error) {
+        // Normalize Supabase error messages
+        return {
+          success: false,
+          message: error.message || "Something went wrong during sign up.",
+        };
+      }
+
+      return { success: true };
+    } catch (err) {
+      // Catch unexpected runtime errors
+      return {
+        success: false,
+        message:
+          err instanceof Error
+            ? err.message
+            : "Unexpected error occurred during sign up.",
+      };
     }
-    return;
   },
   signOut: async () => {
     const { error } = await supabase.auth.signOut();
@@ -48,12 +73,22 @@ const useAuthStore = create<AuthStore>((set) => ({
       });
 
       if (error) {
-        console.error({ error });
-        return;
+        // Normalize Supabase error messages
+        return {
+          success: false,
+          message: error.message || "Something went wrong during sign up.",
+        };
       }
-      return;
-    } catch (error) {
-      console.error("Sign in error :", error);
+      return { success: true };
+    } catch (err) {
+      // Catch unexpected runtime errors
+      return {
+        success: false,
+        message:
+          err instanceof Error
+            ? err.message
+            : "Unexpected error occurred during sign up.",
+      };
     }
   },
   updateSession: (newSession: null | Session) => set({ session: newSession }),

@@ -8,7 +8,8 @@ import { Button } from "./ui/button";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
-import { loginFields } from "@/lib/auth-utils";
+import { loginFields, handleLogin } from "@/lib/auth-utils";
+import useAuthStore from "@/lib/store/auth-store";
 
 const LoginForm = () => {
   type LoginDetail = z.infer<typeof Login>;
@@ -16,9 +17,10 @@ const LoginForm = () => {
     resolver: zodResolver(Login),
     defaultValues: { email: "", password: "" },
   });
+  const signIn = useAuthStore((state) => state.signIn);
 
-  function onSubmit(data: LoginDetail) {
-    console.log({ data });
+  async function onSubmit(data: LoginDetail) {
+    await handleLogin(data, signIn);
   }
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

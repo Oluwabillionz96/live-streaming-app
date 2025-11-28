@@ -1,3 +1,9 @@
+import { RegistrationData } from "./types";
+import { toast } from "sonner";
+import { redirect } from "next/navigation";
+import z from "zod";
+import { Login } from "./zod-schema";
+
 export const registrationFields: {
   name: "email" | "username" | "password" | "confirmPassword";
   id: string;
@@ -35,6 +41,7 @@ export const registrationFields: {
     placeHolder: "••••••••",
   },
 ];
+
 export const loginFields: {
   name: "email" | "password";
   id: string;
@@ -59,3 +66,41 @@ export const loginFields: {
     inputType: "password",
   },
 ];
+
+export async function handleRegister(
+  data: RegistrationData,
+  signUp: (
+    data: RegistrationData
+  ) => Promise<
+    | { success: boolean; message: string }
+    | { success: boolean; message?: undefined }
+  >
+) {
+  const result = await signUp(data);
+  if (!result.success) {
+    toast.error(result.message);
+    return;
+  }
+
+  toast.success("Reistration sucessful");
+  redirect("/");
+}
+
+export async function handleLogin(
+  data: z.infer<typeof Login>,
+  signIn: (
+    data: z.infer<typeof Login>
+  ) => Promise<
+    | { success: boolean; message: string }
+    | { success: boolean; message?: undefined }
+  >
+) {
+  const result = await signIn(data);
+  if (!result.success) {
+    toast.error(result.message);
+  }
+
+  toast.success("Login successful");
+  redirect("/");
+  return;
+}

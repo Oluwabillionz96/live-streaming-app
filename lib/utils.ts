@@ -11,30 +11,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const handleRegister = async (
-  data: RegistrationData,
-  signUp: (arg: RegistrationData) => Promise<{ error: AuthError } | undefined>,
-  setOpen: Dispatch<SetStateAction<boolean>>
-) => {
-  try {
-    await signUp(data);
-    setOpen(false);
-    toast.success("Registeration Successful");
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export async function handleLogin(
-  data: z.infer<typeof Login>,
-  setOpen: Dispatch<SetStateAction<boolean>>,
-  signIn: (arg: z.infer<typeof Login>) => Promise<void>
-) {
-  await signIn(data);
-  setOpen(false);
-  toast.success("Login Successful");
-}
-
 export const mockStreams = [
   {
     id: 1,
@@ -146,7 +122,6 @@ export const upcomingStreams: UpcomingStream[] = [
     category: "Educational",
   },
 ];
-
 
 export const mockMessages: ChatMessage[] = [
   {
