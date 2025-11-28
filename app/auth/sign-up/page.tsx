@@ -84,11 +84,7 @@ export default function SignupPage() {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            <RegistrationForm
-              registrationDetails={registrationDetails}
-              handleSignup={handleSignup}
-              setRegistrationDetails={setRegistrationDetails}
-            />
+            <RegistrationForm />
 
             <Link href={"/auth/login"}>
               <Button

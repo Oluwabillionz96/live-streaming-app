@@ -1,9 +1,9 @@
 import * as z from "zod";
 
-export const Registration = z
+export const RegistrationSchema = z
   .object({
     email: z.email(),
-    username: z.string("Username is required"),
+    username: z.string().min(1, "Username is required"),
     password: z
       .string("Users must create a password")
       .min(8, "Password must be at least 8 characters long")
@@ -11,7 +11,7 @@ export const Registration = z
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
         "Password must  include uppercase, lowercase, a number, and a symbol."
       ),
-    confirmPassword: z.string("Users must confirm their Passwords").min(8),
+    confirmPassword: z.string().min(1, "Users must confirm their Passwords"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],

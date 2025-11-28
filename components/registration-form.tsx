@@ -1,116 +1,61 @@
-import React, { Dispatch, FormEvent, SetStateAction } from "react";
-import { Label } from "./ui/label";
-import { Lock, Mail, User } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { RegistrationData } from "@/lib/types";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
+import { RegistrationSchema } from "@/lib/zod-schema";
+import { registrationFields } from "@/lib/auth-utils";
 
-const RegistrationForm = ({
-  handleSignup,
-  registrationDetails,
-  setRegistrationDetails,
-}: {
-  registrationDetails: RegistrationData;
-  handleSignup: (e: FormEvent) => void;
-  setRegistrationDetails: Dispatch<SetStateAction<RegistrationData>>;
-}) => {
-  const { username, password, confirmPassword, email } = registrationDetails;
+const RegistrationForm = () => {
+  const { control, handleSubmit } = useForm<RegistrationData>({
+    resolver: zodResolver(RegistrationSchema),
+    defaultValues: {
+      email: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  function onSubmit(data: RegistrationData) {
+    console.log({ data });
+  }
 
   return (
-    <form onSubmit={handleSignup} className="space-y-6">
-      <div className="space-y-3">
-        <Label htmlFor="name" className="text-[#e4e4e7]">
-          Full Name
-        </Label>
-        <div className="relative">
-          <User className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-[#71717a]" />
-          <Input
-            id="name"
-            type="text"
-            placeholder="John Doe"
-            value={username}
-            onChange={(e) =>
-              setRegistrationDetails((prev) => ({
-                ...prev,
-                username: e.target.value,
-              }))
-            }
-            className="pl-12 bg-[#212129] border-[#2d2d38] h-12"
-            required
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      id="registration_form"
+      className="space-y-6"
+    >
+      <FieldGroup>
+        {registrationFields.map((item, index) => (
+          <Controller
+            key={index}
+            name={item.name}
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="gap-2">
+                <FieldLabel htmlFor={item.id} className="text-[#e4e4e7]">
+                  {item.label}
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id={item.id}
+                  aria-invalid={fieldState.invalid}
+                  className="text-[#a1a1aa]"
+                  autoFocus={item.autoFocus}
+                  type={item.inputType}
+                  placeholder={item.placeHolder}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
           />
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <Label htmlFor="email" className="text-[#e4e4e7]">
-          Email
-        </Label>
-        <div className="relative">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-[#71717a]" />
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) =>
-              setRegistrationDetails((prev) => ({
-                ...prev,
-                email: e.target.value,
-              }))
-            }
-            className="pl-12 bg-[#212129] border-[#2d2d38] h-12"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <Label htmlFor="password" className="text-[#e4e4e7]">
-          Password
-        </Label>
-        <div className="relative">
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-[#71717a]" />
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) =>
-              setRegistrationDetails((prev) => ({
-                ...prev,
-                password: e.target.value,
-              }))
-            }
-            className="pl-12 bg-[#212129] border-[#2d2d38] h-12"
-            required
-          />
-        </div>
-        <p className="text-xs text-[#71717a]">Must be at least 8 characters</p>
-      </div>
-
-      <div className="space-y-3">
-        <Label htmlFor="confirm-password" className="text-[#e4e4e7]">
-          Confirm Password
-        </Label>
-        <div className="relative">
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-[#71717a]" />
-          <Input
-            id="confirm-password"
-            type="password"
-            placeholder="••••••••"
-            value={confirmPassword}
-            onChange={(e) =>
-              setRegistrationDetails((prev) => ({
-                ...prev,
-                confirmPassword: e.target.value,
-              }))
-            }
-            className="pl-12 bg-[#212129] border-[#2d2d38] h-12"
-            required
-          />
-        </div>
-        <p className="text-xs text-[#71717a]">Must be at least 8 characters</p>
-      </div>
+        ))}
+      </FieldGroup>
 
       <Button
         type="submit"
