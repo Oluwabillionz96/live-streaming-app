@@ -5,7 +5,7 @@ export const RegistrationSchema = z
     email: z.email(),
     username: z.string().min(1, "Username is required"),
     password: z
-      .string("Users must create a password")
+      .string()
       .min(8, "Password must be at least 8 characters long")
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
@@ -21,7 +21,7 @@ export const RegistrationSchema = z
 export const Login = z.object({
   email: z.email(),
   password: z
-    .string("Users must input their passwords to log in")
+    .string()
     .min(8, "Password must be at least 8 characters long")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,

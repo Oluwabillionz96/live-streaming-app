@@ -35,17 +35,13 @@ export default function LoginPage() {
               </div>
               <h2 className="text-[#e4e4e7]">StreamHub</h2>
             </div>
-            <CardTitle>Welcome back</CardTitle>
+            <CardTitle className="text-[#e4e4e7]">Welcome back</CardTitle>
             <CardDescription className="text-[#a1a1aa]">
               Sign in to your account to continue
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <LoginForm
-              loginDetails={loginDetails}
-              setloginDetails={setLoginDetails}
-              handleLogin={handleLogin}
-            />
+            <LoginForm />
 
             <Link href={"/auth/sign-up"}>
               <Button
