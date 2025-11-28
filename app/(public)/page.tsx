@@ -1,9 +1,16 @@
 "use client";
 import StreamCard from "@/components/stream-card";
+import useAuthStore from "@/lib/store/auth-store";
 import { mockStreams } from "@/lib/utils";
+import { Stats } from "fs";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
+  const session = useAuthStore((state) => state.session);
+
+  if (!session) redirect("/auth/login");
+
   return (
     <>
       <div className="mb-8">

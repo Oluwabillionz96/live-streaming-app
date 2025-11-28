@@ -1,11 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Login } from "./zod-schema";
-import { Dispatch, SetStateAction } from "react";
-import { ChatMessage, RegistrationData, UpcomingStream } from "./types";
-import * as z from "zod";
-import { toast } from "sonner";
-import { AuthError } from "@supabase/supabase-js";
+import { ChatMessage, UpcomingStream } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
