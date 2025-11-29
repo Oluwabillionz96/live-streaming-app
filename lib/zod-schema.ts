@@ -28,3 +28,22 @@ export const Login = z.object({
       "Password must include uppercase, lowercase, a number, and a symbol."
     ),
 });
+
+export const StreamSetupSchema = z.object({
+  title: z.string().min(1, "Stream Title is required").max(100),
+  description: z.string().min(1, "Stream description is required"),
+  category: z.string().min(1, "Category is required"),
+  thumbnail: z
+    .instanceof(File)
+    .refine((file) => file.size <= 10 * 1024 * 1024, {
+      message: "File size must be less than 10MB",
+    })
+    .refine(
+      (file) => ["image/png", "image/jpeg", "image/jpg"].includes(file.type),
+      {
+        message: "File must be a PNG or JPG image",
+      }
+    )
+    .optional(),
+  isPublic: z.boolean(),
+});

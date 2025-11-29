@@ -1,51 +1,39 @@
 "use client";
 
-
 import PreviewPanel from "@/components/preview-panel";
 import SetUpForm from "@/components/set-up-form";
-import { useState } from "react";
+import { StreamSetupSchema } from "@/lib/zod-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import z from "zod";
 
 export default function GoLivePage() {
-  const [streamTitle, setStreamTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [isPublic, setIsPublic] = useState(true);
-  const [thumbnail, setThumbnail] = useState("");
+  const { control, handleSubmit, watch } = useForm<
+    z.infer<typeof StreamSetupSchema>
+  >({
+    resolver: zodResolver(StreamSetupSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      category: "",
+      isPublic: true,
+    },
+  });
 
-  const handleGoLive = () => {
-    // Handle go live logic
-    console.log("Going live with:", {
-      streamTitle,
-      description,
-      category,
-      isPublic,
-      thumbnail,
-    });
-  };
+  const setupFormValues: z.infer<typeof StreamSetupSchema> = watch();
+
+  const handleGoLive = () => {};
 
   return (
     <div className="max-w-7xl mx-auto md:p-8 p-4 lg:p-12">
       <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 gap-12">
-        <SetUpForm
-          streamTitle={streamTitle}
-          setStreamTitle={setStreamTitle}
-          isPublic={isPublic}
-          setIsPublic={setIsPublic}
-          description={description}
-          setDescription={setDescription}
-          category={category}
-          setCategory={setCategory}
-        />
+        <SetUpForm control={control} handleSubmit={handleSubmit} />
 
         {/* Preview Panel */}
 
         <PreviewPanel
-          description={description}
-          thumbnail={thumbnail}
-          isPublic={isPublic}
-          streamTitle={streamTitle}
-          category={category}
           handleGoLive={handleGoLive}
+          setupFormValues={setupFormValues}
         />
       </div>
     </div>

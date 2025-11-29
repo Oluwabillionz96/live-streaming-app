@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   CardContent,
@@ -10,22 +9,23 @@ import ImageWithFallback from "./image-with-fallback";
 import { Lock, Radio } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import z from "zod";
+import { StreamSetupSchema } from "@/lib/zod-schema";
 
 const PreviewPanel = ({
-  description,
-  thumbnail,
-  isPublic,
-  streamTitle,
-  category,
   handleGoLive,
+  setupFormValues,
 }: {
-  description: string;
-  thumbnail: string;
-  isPublic: boolean;
-  streamTitle: string;
-  category: string;
   handleGoLive: () => void;
+  setupFormValues: z.infer<typeof StreamSetupSchema>;
 }) => {
+  const {
+    description,
+    thumbnail,
+    isPublic,
+    title: streamTitle,
+    category,
+  } = setupFormValues;
   return (
     <div className="space-y-8">
       <Card className="bg-(--color-surface) border-(--color-border)">
@@ -42,7 +42,7 @@ const PreviewPanel = ({
           <div className="relative aspect-video rounded-lg overflow-hidden bg-(--color-surface-elevated)">
             {thumbnail ? (
               <ImageWithFallback
-                src={thumbnail}
+                src={URL.createObjectURL(thumbnail)}
                 alt="Stream preview"
                 className="w-full h-full object-cover"
               />
@@ -103,7 +103,8 @@ const PreviewPanel = ({
               size="lg"
               className="w-full bg-white text-(--color-primary) hover:bg-white/90 h-14"
               onClick={handleGoLive}
-              disabled={!streamTitle || !category}
+              form="stream_setup_form"
+              // disabled={!streamTitle || !category}
             >
               <Radio className="size-5 mr-2" />
               Start Streaming
