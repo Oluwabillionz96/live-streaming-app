@@ -1,14 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import useAuthStore from "@/lib/store/auth-store";
 import { ArrowLeft, Radio } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
 const GoLiveLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
+  const session = useAuthStore((state) => state.session);
+
+  if (!session) redirect("/auth/login");
   return (
-     <div className="min-h-screen bg-(--color-background)">
+    <div className="min-h-screen bg-(--color-background)">
       <header className="bg-(--color-surface) border-b border-(--color-border) px-8 py-5">
         <div className="flex items-center gap-6">
           <Button

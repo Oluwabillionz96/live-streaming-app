@@ -1,7 +1,7 @@
 import * as z from "zod";
-import { Registration } from "./zod-schema";
+import { RegistrationSchema } from "./zod-schema";
 
-export type RegistrationData = z.infer<typeof Registration>;
+export type RegistrationData = z.infer<typeof RegistrationSchema>;
 
 export interface UpcomingStream {
   id: number;

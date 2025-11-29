@@ -2,7 +2,8 @@
 
 import Header from "@/components/header";
 import SideBar from "@/components/side-bar";
-import { usePathname } from "next/navigation";
+import useAuthStore from "@/lib/store/auth-store";
+import { redirect, usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
 const HomePageLayput = ({ children }: { children: ReactNode }) => {
@@ -10,6 +11,13 @@ const HomePageLayput = ({ children }: { children: ReactNode }) => {
 
   const isDashboard = pathname.startsWith("/dashboard");
   const isWatch = pathname.startsWith("/watch");
+
+  const session = useAuthStore((state) => state.session);
+
+  if (!session) {
+    redirect("/auth/login");
+  }
+
   return (
     <div className="min-h-screen bg-color-background">
       <Header isDashboard={isDashboard} isWatch={isWatch} />

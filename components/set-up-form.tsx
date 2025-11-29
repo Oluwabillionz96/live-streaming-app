@@ -28,6 +28,8 @@ import z from "zod";
 import { StreamSetupSchema } from "@/lib/zod-schema";
 import { Field, FieldError, FieldLabel } from "./ui/field";
 import Image from "next/image";
+import useStreamStore from "@/lib/store/stream-store";
+import { redirect } from "next/navigation";
 
 const categories = [
   "Gaming",
@@ -45,8 +47,14 @@ const SetUpForm = ({
   control: Control<z.infer<typeof StreamSetupSchema>>;
   handleSubmit: UseFormHandleSubmit<z.infer<typeof StreamSetupSchema>>;
 }) => {
-  const onSubmit: SubmitHandler<z.infer<typeof StreamSetupSchema>> = (data) => {
-    console.log(data);
+  const setStreamInfo = useStreamStore((state) => state.setStreamInfo);
+  const setCanStream = useStreamStore((state) => state.setCanStream);
+  const onSubmit: SubmitHandler<z.infer<typeof StreamSetupSchema>> = async (
+    data
+  ) => {
+    setStreamInfo(data);
+    setCanStream(true);
+    redirect("/studio");
   };
   return (
     <div className="space-y-8">
