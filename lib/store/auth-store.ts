@@ -8,14 +8,14 @@ import * as z from "zod";
 import { Login } from "../zod-schema";
 
 type AuthStore = {
-  session: null | Session;
+  session: null | Session | boolean;
   signUp: (
     arg: RegistrationData
   ) => Promise<
     | { success: boolean; message: string }
     | { success: boolean; message?: undefined }
   >;
-  updateSession: (arg: null | Session) => void;
+  updateSession: (arg: null | Session | boolean) => void;
   signOut: () => Promise<void>;
   signIn: (
     arg: z.infer<typeof Login>
@@ -91,7 +91,7 @@ const useAuthStore = create<AuthStore>((set) => ({
       };
     }
   },
-  updateSession: (newSession: null | Session) => set({ session: newSession }),
+  updateSession: (newSession) => set({ session: newSession }),
 }));
 
 export default useAuthStore;

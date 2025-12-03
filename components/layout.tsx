@@ -8,7 +8,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const updateSession = useAuthStore((state) => state.updateSession);
   const getSession = async () => {
     const { data } = await supabase.auth.getSession();
-    updateSession(data.session);
+    updateSession(data.session ?? false);
   };
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        updateSession(session);
+        updateSession(session ?? false);
       }
     );
 

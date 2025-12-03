@@ -31,6 +31,8 @@ export default function LiveStreamPage() {
 
   if (!session) redirect("/auth/login");
 
+  if (session === null) <>Loading...</>;
+
   useEffect(() => {
     if (!streamState.canStream) {
       redirect("/go-live");

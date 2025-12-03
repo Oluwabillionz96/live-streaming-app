@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Card,
   CardContent,
@@ -11,16 +9,8 @@ import { Button } from "@/components/ui/button";
 import AuthFormAltSide from "@/components/auth-form-alt-side";
 import Link from "next/link";
 import LoginForm from "@/components/login-form";
-import useAuthStore from "@/lib/store/auth-store";
-import { redirect } from "next/navigation";
 
 export default function LoginPage() {
-  const session = useAuthStore((state) => state.session);
-
-  if (session) {
-    redirect("/");
-  }
-
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex">
       {/* Left Side - Form */}
