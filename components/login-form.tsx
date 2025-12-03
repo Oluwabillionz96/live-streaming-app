@@ -9,10 +9,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 import { loginFields, handleLogin } from "@/lib/auth-utils";
 import useAuthStore from "@/lib/store/auth-store";
+import Spinner from "./spinner";
 
 const LoginForm = () => {
   type LoginDetail = z.infer<typeof Login>;
-  const { control, handleSubmit } = useForm<LoginDetail>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<LoginDetail>({
     resolver: zodResolver(Login),
     defaultValues: { email: "", password: "" },
   });
@@ -54,9 +59,11 @@ const LoginForm = () => {
 
       <Button
         type="submit"
-        className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] h-12"
+        className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] hover:cursor-pointer h-12 disabled:hover:cursor-not-allowed "
+        disabled={isSubmitting}
       >
-        Sign In
+        {isSubmitting && <Spinner />}
+        {!isSubmitting ? "Sign In" : "Loading..."}
       </Button>
     </form>
   );

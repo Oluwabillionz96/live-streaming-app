@@ -9,9 +9,14 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 import { RegistrationSchema } from "@/lib/zod-schema";
 import { handleRegister, registrationFields } from "@/lib/auth-utils";
 import useAuthStore from "@/lib/store/auth-store";
+import Spinner from "./spinner";
 
 const RegistrationForm = () => {
-  const { control, handleSubmit } = useForm<RegistrationData>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<RegistrationData>({
     resolver: zodResolver(RegistrationSchema),
     defaultValues: {
       email: "",
@@ -64,9 +69,11 @@ const RegistrationForm = () => {
 
       <Button
         type="submit"
-        className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] h-12"
+        className="w-full bg-[#8b5cf6] hover:bg-[#7c3aed] hover:cursor-pointer h-12 disabled:hover:cursor-not-allowed "
+        disabled={isSubmitting}
       >
-        Create Account
+        {isSubmitting && <Spinner />}
+        {isSubmitting ? "Loading..." : "Create Account"}
       </Button>
     </form>
   );
