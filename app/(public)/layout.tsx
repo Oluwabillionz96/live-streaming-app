@@ -14,8 +14,12 @@ const HomePageLayput = ({ children }: { children: ReactNode }) => {
 
   const session = useAuthStore((state) => state.session);
 
-  if (!session) {
-    redirect("/auth/login");
+  if (session === null) {
+    return <>Loading...</>;
+  }
+
+  if (session === false) {
+    redirect("/");
   }
 
   return (

@@ -10,6 +10,10 @@ const GoLiveLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const session = useAuthStore((state) => state.session);
 
+  if (session === null) {
+    return <>Loading...</>;
+  }
+
   if (!session) redirect("/auth/login");
   return (
     <div className="min-h-screen bg-(--color-background)">
