@@ -65,7 +65,7 @@ export default function LiveStreamPage() {
       videoRef.current.srcObject = streamRef.current;
       videoRef.current.play();
     }
-  }, [isCameraOn]);
+  }, [isCameraOn, isMicOn]);
 
   const openCamera = useCallback(async () => {
     if (!videoRef.current) return;
@@ -102,18 +102,6 @@ export default function LiveStreamPage() {
   }, [isStreaming]);
 
   const toggleMic = async () => {
-    // if (isCameraOn && streamRef.current) {
-    //   const audioTracks = streamRef.current.getAudioTracks();
-    //   if (audioTracks.length > 0) {
-    //     audioTracks.forEach((track) => {
-    //       track.enabled = !isMicOn;
-    //     });
-    //     setIsMicOn(!isMicOn);
-    //   }
-    // } else {
-    //   // If camera is off, just toggle the state
-    //   setIsMicOn(!isMicOn);
-    // }
     setIsMicOn(!isMicOn);
   };
 

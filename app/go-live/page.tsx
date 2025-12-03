@@ -22,8 +22,6 @@ export default function GoLivePage() {
 
   const setupFormValues: z.infer<typeof StreamSetupSchema> = watch();
 
-  const handleGoLive = () => {};
-
   return (
     <div className="max-w-7xl mx-auto md:p-8 p-4 lg:p-12">
       <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 gap-12">
@@ -31,10 +29,7 @@ export default function GoLivePage() {
 
         {/* Preview Panel */}
 
-        <PreviewPanel
-          handleGoLive={handleGoLive}
-          setupFormValues={setupFormValues}
-        />
+        <PreviewPanel setupFormValues={setupFormValues} />
       </div>
     </div>
   );

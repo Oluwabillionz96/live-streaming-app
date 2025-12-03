@@ -13,10 +13,8 @@ import z from "zod";
 import { StreamSetupSchema } from "@/lib/zod-schema";
 
 const PreviewPanel = ({
-  handleGoLive,
   setupFormValues,
 }: {
-  handleGoLive: () => void;
   setupFormValues: z.infer<typeof StreamSetupSchema>;
 }) => {
   const {
@@ -102,7 +100,6 @@ const PreviewPanel = ({
             <Button
               size="lg"
               className="w-full bg-white text-(--color-primary) hover:bg-white/90 h-14"
-              onClick={handleGoLive}
               form="stream_setup_form"
               // disabled={!streamTitle || !category}
             >
