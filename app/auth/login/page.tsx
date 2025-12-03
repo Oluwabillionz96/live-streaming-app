@@ -1,4 +1,4 @@
-
+"use client";
 
 import {
   Card,
@@ -11,8 +11,16 @@ import { Button } from "@/components/ui/button";
 import AuthFormAltSide from "@/components/auth-form-alt-side";
 import Link from "next/link";
 import LoginForm from "@/components/login-form";
+import useAuthStore from "@/lib/store/auth-store";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
+  const session = useAuthStore((state) => state.session);
+
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex">
       {/* Left Side - Form */}
@@ -36,7 +44,7 @@ export default function LoginPage() {
             <Link href={"/auth/sign-up"}>
               <Button
                 variant={"link"}
-                className="text-[#8b5cf6] w-full text-center text-sm pt-2 hover:text-[#7c3aed]"
+                className="text-[#8b5cf6] w-full hover:cursor-pointer text-center text-sm pt-2 hover:text-[#7c3aed]"
               >
                 Don&apos;t have an account? Sign up
               </Button>

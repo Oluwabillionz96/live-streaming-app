@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -10,8 +12,16 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import RegistrationForm from "@/components/registration-form";
 import AuthFormAltSide from "@/components/auth-form-alt-side";
+import useAuthStore from "@/lib/store/auth-store";
+import { redirect } from "next/navigation";
 
 export default function SignupPage() {
+  const session = useAuthStore((state) => state.session);
+
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex">
       <AuthFormAltSide>
@@ -73,7 +83,7 @@ export default function SignupPage() {
             <Link href={"/auth/login"}>
               <Button
                 variant={"link"}
-                className="text-[#8b5cf6] text-center text-sm w-full pt-2 hover:text-[#7c3aed]"
+                className="text-[#8b5cf6] hover:cursor-pointer text-center text-sm w-full pt-2 hover:text-[#7c3aed]"
               >
                 Already have an account? Sign in
               </Button>
