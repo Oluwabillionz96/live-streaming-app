@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ChatMessage, UpcomingStream } from "./types";
+import { ChatMessage, Stream, UpcomingStream } from "./types";
+import { supabase } from "./supabase-client";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -169,3 +170,49 @@ export const formatDuration = (seconds: number) => {
     .toString()
     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
+
+export const homeTabValues: {
+  activeTab: "live" | "past" | "upcoming";
+  value: string;
+}[] = [
+  { activeTab: "live", value: "Live Now" },
+  { activeTab: "upcoming", value: " Upcoming" },
+  { activeTab: "past", value: "Past Streams" },
+];
+
+export async function getStreams(): Promise<{
+  liveStreams: Stream[];
+  upcomingStreams: Stream[];
+  pastStreams: Stream[];
+}> {
+  const results = await Promise.all([
+    supabase
+      .from("streams")
+      .select("*")
+      .eq("status", "live")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("streams")
+      .select("*")
+      .eq("status", "upcoming")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("streams")
+      .select("*")
+      .eq("status", "past")
+      .order("created_at", { ascending: true }),
+  ]);
+
+  const [live, upcoming, past] = results;
+
+  if (live.error || upcoming.error || past.error) {
+    console.error({ live, upcoming, past });
+    throw new Error("Failed to fetch streams");
+  }
+
+  return {
+    liveStreams: live.data || [],
+    upcomingStreams: upcoming.data || [],
+    pastStreams: past.data || [],
+  };
+}

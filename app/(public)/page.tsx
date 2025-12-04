@@ -1,21 +1,27 @@
 "use client";
 import StreamCard from "@/components/stream-card";
-import useAuthStore from "@/lib/store/auth-store";
-import { mockStreams } from "@/lib/utils";
+import Tabs from "@/components/tabs";
+import useStream from "@/hooks/useStream";
+import { homeTabValues, mockStreams } from "@/lib/utils";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useState } from "react";
 
 export default function HomePage() {
-  const session = useAuthStore((state) => state.session);
-
-  if (!session) redirect("/auth/login");
+  const [activeTab, setActiveTab] = useState<"live" | "past" | "upcoming">(
+    "live"
+  );
+  const { streams } = useStream();
 
   return (
     <>
       <div className="mb-8">
-        <h2 className="mb-2">Live Now</h2>
+        <Tabs
+          tabValues={homeTabValues}
+          tab={activeTab}
+          setActiveTab={setActiveTab}
+        />
         <p className="text-(--color-text-secondary)">
-          {mockStreams.length} streams in all
+          {streams[`${activeTab}Streams`].length} streams in all
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

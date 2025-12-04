@@ -17,3 +17,18 @@ export interface ChatMessage {
   message: string;
   timestamp: string;
 }
+
+export type Stream = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  host_id: string;
+  is_public: boolean;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  thumbnail_url: string | null;
+  recording_url: string | null;
+};
+
