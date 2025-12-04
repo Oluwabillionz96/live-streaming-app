@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ChatMessage, Stream, UpcomingStream } from "./types";
+import { ChatMessage, Stream, UpcomingStream, User } from "./types";
 import { supabase } from "./supabase-client";
+import { Session } from "@supabase/supabase-js";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -215,4 +216,25 @@ export async function getStreams(): Promise<{
     upcomingStreams: upcoming.data || [],
     pastStreams: past.data || [],
   };
+}
+
+export async function getCurrentUser(
+  session: Session | null | false
+): Promise<User | null | Session["user"]> {
+  if (!session) return null;
+
+  const user = session.user;
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single(); // only one row expected
+
+  if (profileError) {
+    // console.error("Profile fetch error:", profileError);
+    return { ...user }; // fallback to auth user only
+  }
+
+  return profile;
 }

@@ -2,14 +2,18 @@
 
 import useAuthStore from "@/lib/store/auth-store";
 import { supabase } from "@/lib/supabase-client";
-import { ReactNode, useEffect } from "react";
+import { getCurrentUser } from "@/lib/utils";
+import { ReactNode, useEffect, useState } from "react";
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const updateSession = useAuthStore((state) => state.updateSession);
+  const authStore = useAuthStore();
+  const { updateSession, session, updateUser } = authStore;
   const getSession = async () => {
     const { data } = await supabase.auth.getSession();
     updateSession(data.session ?? false);
   };
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSession();
@@ -24,6 +28,19 @@ const Layout = ({ children }: { children: ReactNode }) => {
       authListener.subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const currentUser = await getCurrentUser(session);
+      updateUser(currentUser);
+      setLoading(false);
+    }
+
+    fetchUser();
+  }, [session, updateUser]);
+
+  if (loading) return <p>Loading...</p>;
+
   return <>{children}</>;
 };
 

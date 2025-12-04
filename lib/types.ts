@@ -32,3 +32,10 @@ export type Stream = {
   recording_url: string | null;
 };
 
+
+export type User = {
+  id: string;
+  username: string;
+  created_at: string;
+  avatar_url: string;
+};

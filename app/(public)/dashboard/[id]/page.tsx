@@ -16,8 +16,8 @@ export const PageContents = ({
   children?: ReactNode;
 }) => {
   return (
-    <section>
-      <header className="py-4">
+    <section className="min-h-screen  text-white">
+      <header className="py-4 border-b mb-4">
         <h2 className="mb-6">{pageTitle}</h2>
         <p className="text-(--color-text-secondary)">{pageDesc}</p>
       </header>
