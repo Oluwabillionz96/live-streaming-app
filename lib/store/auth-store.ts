@@ -9,8 +9,8 @@ import { Login } from "../zod-schema";
 
 type AuthStore = {
   session: null | Session | false;
-  user: User | null | Session["user"];
-  updateUser: (user: User | null | Session["user"]) => void;
+  user: User | null ;
+  updateUser: (user: User | null) => void;
   signUp: (
     arg: RegistrationData
   ) => Promise<

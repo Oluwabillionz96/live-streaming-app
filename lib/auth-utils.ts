@@ -1,8 +1,10 @@
-import { RegistrationData } from "./types";
+import { RegistrationData, User } from "./types";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
 import z from "zod";
 import { Login } from "./zod-schema";
+import { supabase } from "./supabase-client";
+import { Session } from "@supabase/supabase-js";
 
 export const registrationFields: {
   name: "email" | "username" | "password" | "confirmPassword";
@@ -103,4 +105,29 @@ export async function handleLogin(
   toast.success("Login successful");
   redirect("/");
   return;
+}
+
+export async function getCurrentUser(
+  session: Session | null | false
+): Promise<User | null> {
+  if (!session) return null;
+
+  const user = session.user;
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single(); // only one row expected
+
+  if (profileError) {
+    return {
+      username: user.user_metadata.username,
+      id: user.id,
+      created_at: user.created_at,
+      avatar_url: "",
+    };
+  }
+
+  return profile;
 }

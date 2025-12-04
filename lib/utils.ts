@@ -218,23 +218,4 @@ export async function getStreams(): Promise<{
   };
 }
 
-export async function getCurrentUser(
-  session: Session | null | false
-): Promise<User | null | Session["user"]> {
-  if (!session) return null;
 
-  const user = session.user;
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single(); // only one row expected
-
-  if (profileError) {
-    // console.error("Profile fetch error:", profileError);
-    return { ...user }; // fallback to auth user only
-  }
-
-  return profile;
-}
