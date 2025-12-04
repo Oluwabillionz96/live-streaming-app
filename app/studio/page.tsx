@@ -101,7 +101,7 @@ export default function LiveStreamPage() {
 
     return () =>
       streamRef.current?.getTracks().forEach((track) => track.stop());
-  }, [isStreaming]);
+  }, [isStreaming, openCamera]);
 
   const toggleMic = async () => {
     setIsMicOn(!isMicOn);
@@ -250,7 +250,7 @@ export default function LiveStreamPage() {
       {/* Chat Toggle Button */}
       {!isChatOpen && (
         <button
-          className="fixed right-6 bottom-6 lg:bottom-auto lg:top-32 bg-blue-600 hover:bg-blue-700 shadow-lg z-[100] px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
+          className="fixed right-6 bottom-6 lg:bottom-auto lg:top-32 bg-blue-600 hover:bg-blue-700 shadow-lg z-100 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
           onClick={() => setIsChatOpen(true)}
         >
           <span className="hidden md:flex items-center gap-2">

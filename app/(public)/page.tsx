@@ -27,9 +27,9 @@ export default function HomePage() {
       </div>
       {streams[`${activeTab}Streams`].length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {mockStreams.map((stream) => (
+          {streams[`${activeTab}Streams`].map((stream) => (
             <Link href={`/watch/${stream.id}`} key={stream.id}>
-              <StreamCard {...stream} onClick={() => {}} />
+              <StreamCard {...stream} />
             </Link>
           ))}
         </div>

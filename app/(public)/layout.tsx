@@ -19,7 +19,7 @@ const HomePageLayput = ({ children }: { children: ReactNode }) => {
   }
 
   if (session === false) {
-    redirect("/");
+    redirect("/auth/login");
   }
 
   return (

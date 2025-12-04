@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Camera, User, Save, X } from "lucide-react";
 import { PageContents } from "@/app/(public)/dashboard/[id]/page";
+import Image from "next/image";
+import useAuthStore from "@/lib/store/auth-store";
 
 export default function SettingsPage() {
   const [username, setUsername] = useState("ProGamer_X");
@@ -8,6 +10,8 @@ export default function SettingsPage() {
   const [previewUrl, setPreviewUrl] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const authStore = useAuthStore()
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -59,10 +63,11 @@ export default function SettingsPage() {
             <div className="relative">
               <div className="w-24 h-24 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden">
                 {previewUrl ? (
-                  <img
+                  <Image
                     src={previewUrl}
                     alt="Profile"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 ) : (
                   <User className="w-12 h-12 text-gray-600" />
@@ -182,7 +187,7 @@ export default function SettingsPage() {
           Manage your account settings and security
         </p>
         <button
-          onClick={signOut}
+          onClick={authStore.signOut}
           className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-colors"
         >
           Log out

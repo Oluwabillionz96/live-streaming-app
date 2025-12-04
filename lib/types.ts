@@ -26,16 +26,19 @@ export type Stream = {
   host_id: string;
   is_public: boolean;
   status: string;
+  profiles: {
+    username: string;
+    avatar_url: string;
+  };
   created_at: string;
   updated_at: string;
   thumbnail_url: string | null;
   recording_url: string | null;
 };
 
-
-export type User = {
+export interface User {
   id: string;
   username: string;
   created_at: string;
   avatar_url: string;
-};
+}

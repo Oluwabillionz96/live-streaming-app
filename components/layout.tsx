@@ -1,9 +1,9 @@
 "use client";
 
+import { getCurrentUser } from "@/lib/auth-utils";
 import useAuthStore from "@/lib/store/auth-store";
 import { supabase } from "@/lib/supabase-client";
-import { getCurrentUser } from "@/lib/utils";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const authStore = useAuthStore();
@@ -12,8 +12,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
     const { data } = await supabase.auth.getSession();
     updateSession(data.session ?? false);
   };
-
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSession();
@@ -30,16 +28,25 @@ const Layout = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    let isMounted = true; // track if component is still mounted
+
     async function fetchUser() {
+      if (!session) return;
+
       const currentUser = await getCurrentUser(session);
-      updateUser(currentUser);
-      setLoading(false);
+      if (isMounted) {
+        updateUser(currentUser);
+      }
     }
 
     fetchUser();
+
+    return () => {
+      isMounted = false;
+    };
   }, [session, updateUser]);
 
-  if (loading) return <p>Loading...</p>;
+  if (session === null) return <p>Loading...</p>;
 
   return <>{children}</>;
 };

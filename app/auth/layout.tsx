@@ -11,7 +11,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
     return <>Loading...</>;
   }
 
-  if (session === false) {
+  if (session) {
     redirect("/");
   }
 
