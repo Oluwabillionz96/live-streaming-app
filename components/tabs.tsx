@@ -41,11 +41,12 @@ export function TabButton({
   return (
     <button
       onClick={() => setActiveTab(activeTab)}
-      className={`pb-4 px-2 font-semibold transition-colors relative ${
+      className={`pb-4 px-2 font-semibold cursor-pointer transition-colors relative ${
         tab === activeTab ? "text-white" : "text-gray-400 hover:text-gray-300"
       }`}
     >
-      {value}
+      <span className="hidden md:block">{value.trim()}</span>
+      <span className="md:hidden">{value.trim().split(" ")[0]}</span>
       {tab === activeTab && (
         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600"></div>
       )}

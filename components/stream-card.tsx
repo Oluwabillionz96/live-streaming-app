@@ -1,12 +1,10 @@
-// import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-// import { Eye, Users } from "lucide-react";
 import ImageWithFallback from "./image-with-fallback";
-import { Users } from "lucide-react";
+import { Users, Video } from "lucide-react";
 
 interface StreamCardProps {
-  thumbnail: string;
+  thumbnail?: string;
   title: string;
   creatorName: string;
   creatorAvatar: string;
@@ -32,11 +30,19 @@ export default function StreamCard({
       onClick={onClick}
     >
       <div className="relative aspect-video rounded-lg overflow-hidden bg-(--color-surface)">
-        <ImageWithFallback
-          src={thumbnail}
-          alt={title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+        {thumbnail ? (
+          <ImageWithFallback
+            src={thumbnail}
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          // Default thumbnail when no image is provided
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-900 to-gray-900">
+            <Video className="w-16 h-16 text-purple-400 opacity-50" />
+          </div>
+        )}
+
         {isLive && (
           <div className="absolute top-3 left-3">
             <Badge className="live-badge px-2 py-1 uppercase tracking-wide">
@@ -67,9 +73,7 @@ export default function StreamCard({
           <p className="text-sm text-(--color-text-secondary) truncate">
             {creatorName}
           </p>
-          <p className="text-sm text-(--color-text-tertiary)">
-            {category}
-          </p>
+          <p className="text-sm text-(--color-text-tertiary)">{category}</p>
         </div>
       </div>
     </div>

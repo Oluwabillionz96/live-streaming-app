@@ -1,11 +1,12 @@
 "use client";
 import DashboardOverview from "@/components/dashboard-overview";
+import SettingsPage from "@/components/settings-page";
 import { Button } from "@/components/ui/button";
 import useAuthStore from "@/lib/store/auth-store";
 import { useParams } from "next/navigation";
 import { ReactNode } from "react";
 
-const PageContents = ({
+export const PageContents = ({
   pageTitle,
   pageDesc,
   children,
@@ -46,12 +47,7 @@ const DashboardNavigations = () => {
           pageTitle="Analytics"
         />
       ) : pageId === "settings" ? (
-        <PageContents
-          pageTitle="Settings"
-          pageDesc=" Channel settings and preferences."
-        >
-          <Button onClick={signOut}>Log out</Button>
-        </PageContents>
+        <SettingsPage />
       ) : null}
     </>
   );
