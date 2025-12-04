@@ -2,48 +2,47 @@
 
 import { useState } from "react";
 
-import {
-  Heart,
-  Users,
-  Share2,
-  ChevronLeft,
-  Radio,
-  MessageCircleIcon,
-} from "lucide-react";
+import { Heart, Share2, ChevronLeft, MessageCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ImageWithFallback from "@/components/image-with-fallback";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChatMessage } from "@/lib/types";
-import { mockMessages } from "@/lib/utils";
+
 import ChatPanel from "@/components/chat-panel";
 import VideoPlayer from "@/components/video-player";
+import { useParams } from "next/navigation";
+import useStream from "@/hooks/useStream";
 
 export default function WatchPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatInput, setChatInput] = useState("");
-  const [messages, setMessages] = useState(mockMessages);
+  // const [messagess, setMessages] = useState([]);
   const badges = [" Gaming", "Tournament", "Pro Player", "Competitive"];
+  const params = useParams();
+  const { streamId } = Array.isArray(params) ? params[0] : params;
 
-  const handleSendMessage = () => {
-    if (!chatInput.trim()) return;
+  const { messages } = useStream(streamId);
 
-    const newMessage: ChatMessage = {
-      id: messages.length + 1,
-      username: "You",
-      avatar:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80",
-      message: chatInput,
-      timestamp: new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      }),
-    };
+  console.log({ messages });
 
-    setMessages([...messages, newMessage]);
-    setChatInput("");
-  };
+  // const handleSendMessage = () => {
+  //   if (!chatInput.trim()) return;
+
+  //   const newMessage: ChatMessage = {
+  //     id: messages.length + 1,
+  //     username: "You",
+  //     avatar:
+  //       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80",
+  //     message: chatInput,
+  //     timestamp: new Date().toLocaleTimeString("en-US", {
+  //       hour: "numeric",
+  //       minute: "2-digit",
+  //     }),
+  //   };
+
+  //   setMessages([...messages, newMessage]);
+  //   setChatInput("");
+  // };
 
   return (
     <>
@@ -136,7 +135,7 @@ export default function WatchPage() {
         messages={messages}
         chatInput={chatInput}
         setChatInput={setChatInput}
-        handleSendMessage={handleSendMessage}
+        handleSendMessage={()=>{}}
       />
 
       {/* Chat Toggle Button (when closed) */}

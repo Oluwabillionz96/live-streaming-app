@@ -2,9 +2,11 @@ import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "./ui/button";
 import { ChevronRight, Send } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
-import { ChatMessage } from "@/lib/types";
+import { StreamMessage } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
+import useAuthStore from "@/lib/store/auth-store";
+import { formatDate } from "@/lib/utils";
 
 const ChatPanel = ({
   isChatOpen,
@@ -16,11 +18,12 @@ const ChatPanel = ({
 }: {
   isChatOpen: boolean;
   setIsChatOpen: Dispatch<SetStateAction<boolean>>;
-  messages: ChatMessage[];
+  messages: StreamMessage[];
   chatInput: string;
   setChatInput: Dispatch<SetStateAction<string>>;
   handleSendMessage: () => void;
 }) => {
+  const user = useAuthStore((state) => state.user);
   return (
     <div
       className={`fixed lg:fixed right-0 top-[81px] h-[calc(100vh-81px)] w-full lg:w-[450px] bg-(--color-surface) border-l border-(--color-border) flex flex-col transition-transform duration-300 ${
@@ -46,18 +49,31 @@ const ChatPanel = ({
           {messages.map((msg) => (
             <div key={msg.id} className="flex gap-4">
               <Avatar className="size-10 shrink-0">
-                <AvatarImage src={msg.avatar} className="object-cover" />
-                <AvatarFallback>{msg.username[0]}</AvatarFallback>
+                <AvatarImage
+                  src={
+                    msg.profiles.avatar_url
+                      ? msg.profiles.avatar_url
+                      : undefined
+                  }
+                  className="object-cover"
+                />
+                <AvatarFallback className="text-purple-900 font-bold text-xl">
+                  {msg.profiles.username[0]}
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-3 mb-1">
-                  <span className="truncate">{msg.username}</span>
+                  <span className="truncate">
+                    {user?.username === msg.profiles.username
+                      ? "You"
+                      : msg.profiles.username}
+                  </span>
                   <span className="text-xs text-(--color-text-tertiary) shrink-0">
-                    {msg.timestamp}
+                    {formatDate(msg.created_at)}
                   </span>
                 </div>
                 <p className="text-sm text-(--color-text-secondary) wrap-break-word">
-                  {msg.message}
+                  {msg.content}
                 </p>
               </div>
             </div>

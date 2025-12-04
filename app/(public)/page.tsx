@@ -3,7 +3,7 @@ import EmptyStreamState from "@/components/empty-stream-state";
 import StreamCard from "@/components/stream-card";
 import Tabs from "@/components/tabs";
 import useStream from "@/hooks/useStream";
-import { homeTabValues, mockStreams } from "@/lib/utils";
+import { homeTabValues } from "@/lib/utils";
 import { Calendar, Clock, Wifi } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";

@@ -46,7 +46,7 @@ export default function StreamCard({
             alt={profiles.username}
             className="object-cover"
           />
-          <AvatarFallback className="text-purple-900">
+          <AvatarFallback className="text-purple-900 font-bold text-xl">
             {profiles.username.trim()[0]}
           </AvatarFallback>
         </Avatar>

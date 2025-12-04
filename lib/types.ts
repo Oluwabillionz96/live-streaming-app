@@ -10,13 +10,6 @@ export interface UpcomingStream {
   category: string;
 }
 
-export interface ChatMessage {
-  id: number;
-  username: string;
-  avatar: string;
-  message: string;
-  timestamp: string;
-}
 
 export type Stream = {
   id: string;
@@ -41,4 +34,16 @@ export interface User {
   username: string;
   created_at: string;
   avatar_url: string;
+}
+
+export interface StreamMessage {
+  id: string;
+  created_at: string;
+  stream_id: string;
+  user_id: string;
+  content: string;
+  profiles: {
+    username: string;
+    avatar_url: string;
+  };
 }
