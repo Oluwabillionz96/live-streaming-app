@@ -16,7 +16,6 @@ export default function WatchPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatInput, setChatInput] = useState("");
-  // const [messagess, setMessages] = useState([]);
   const badges = [" Gaming", "Tournament", "Pro Player", "Competitive"];
   const params = useParams();
   const { streamId } = Array.isArray(params) ? params[0] : params;

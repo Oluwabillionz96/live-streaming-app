@@ -15,17 +15,28 @@ const useStream = (streamId?: string) => {
     let ignore = false;
 
     const load = async () => {
-      const [streams, messages, stream] = await Promise.all([
-        getStreams(),
-        getStreamMessages(streamId ?? ""),
-        getStreamById(streamId ?? ""),
-      ]);
+      if (streamId) {
+        const [streams, messages, stream] = await Promise.all([
+          getStreams(),
+          getStreamMessages(streamId ?? ""),
+          getStreamById(streamId ?? ""),
+        ]);
+
+        if (!ignore) {
+          setStreams(streams);
+          setMessages(messages);
+          setStream(stream);
+        }
+
+        return;
+      }
+      const streams = await getStreams();
 
       if (!ignore) {
         setStreams(streams);
-        setMessages(messages);
-        setStream(stream);
       }
+
+      return;
     };
 
     load();
@@ -33,7 +44,7 @@ const useStream = (streamId?: string) => {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [streamId]);
 
   return { streams, messages, stream };
 };
