@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Users, Camera, MessageCircleIcon } from "lucide-react";
-import { mockMessages } from "@/lib/utils";
 import StudioHeader from "@/components/studio-header";
 import ChatPanel from "@/components/chat-panel";
 import useStreamStore from "@/lib/store/stream-store";
@@ -19,7 +18,7 @@ export default function LiveStreamPage() {
   const [streamDuration, setStreamDuration] = useState(0);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
-  const [messages, setMessages] = useState(mockMessages);
+  const [messages, setMessages] = useState([]);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedCamera, setSelectedCamera] = useState("default");
   const [selectedMic, setSelectedMic] = useState("default");
@@ -137,7 +136,7 @@ export default function LiveStreamPage() {
       }),
     };
 
-    setMessages([...messages, newMessage]);
+    // setMessages([...messages, newMessage]);
     setChatInput("");
   };
 

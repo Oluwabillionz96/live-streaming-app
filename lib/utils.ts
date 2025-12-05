@@ -2,6 +2,8 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Stream, UpcomingStream } from "./types";
 import { supabase } from "./supabase-client";
+import z from "zod";
+import { StreamSetupSchema } from "./zod-schema";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -206,6 +208,30 @@ export async function getStreamById(id: string) {
     .from("streams")
     .select("*")
     .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error({ error, data });
+    throw new Error("Failed to fetch stream");
+  }
+
+  return data;
+}
+
+export async function saveStream(
+  stream: z.infer<typeof StreamSetupSchema>,
+  host_id: string
+) {
+  const { data, error } = await supabase
+    .from("streams")
+    .insert({
+      title: stream.title,
+      description: stream.description,
+      category: stream.category,
+      is_public: stream.isPublic,
+      status: "upcoming",
+      host_id,
+    })
     .single();
 
   if (error) {

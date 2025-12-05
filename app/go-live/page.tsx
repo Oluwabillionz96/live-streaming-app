@@ -4,6 +4,7 @@ import PreviewPanel from "@/components/preview-panel";
 import SetUpForm from "@/components/set-up-form";
 import { StreamSetupSchema } from "@/lib/zod-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -21,15 +22,18 @@ export default function GoLivePage() {
   });
 
   const setupFormValues: z.infer<typeof StreamSetupSchema> = watch();
+  const [isSave, setIsSave] = useState(false);
 
   return (
     <div className="max-w-7xl mx-auto md:p-8 p-4 lg:p-12">
       <div className="grid grid-cols-1 md:grid-cols-2 md:gap-6 gap-12">
-        <SetUpForm control={control} handleSubmit={handleSubmit} />
+        <SetUpForm
+          control={control}
+          handleSubmit={handleSubmit}
+          isSave={isSave}
+        />
 
-        {/* Preview Panel */}
-
-        <PreviewPanel setupFormValues={setupFormValues} />
+        <PreviewPanel setupFormValues={setupFormValues} setIsSave={setIsSave} />
       </div>
     </div>
   );

@@ -6,16 +6,21 @@ import {
   CardTitle,
 } from "./ui/card";
 import ImageWithFallback from "./image-with-fallback";
-import { Lock, Radio } from "lucide-react";
+import { BookmarkCheckIcon, Lock, Radio } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import z from "zod";
 import { StreamSetupSchema } from "@/lib/zod-schema";
+import { saveStream } from "@/lib/utils";
+import useAuthStore from "@/lib/store/auth-store";
+import { Dispatch, SetStateAction } from "react";
 
 const PreviewPanel = ({
   setupFormValues,
+  setIsSave,
 }: {
   setupFormValues: z.infer<typeof StreamSetupSchema>;
+  setIsSave: Dispatch<SetStateAction<boolean>>;
 }) => {
   const {
     description,
@@ -24,6 +29,7 @@ const PreviewPanel = ({
     title: streamTitle,
     category,
   } = setupFormValues;
+
   return (
     <div className="space-y-8">
       <Card className="bg-(--color-surface) border-(--color-border)">
@@ -54,11 +60,11 @@ const PreviewPanel = ({
                 </div>
               </div>
             )}
-            <div className="absolute top-4 left-4">
+            {/* <div className="absolute top-4 left-4">
               <Badge className="live-badge px-4 py-2 uppercase tracking-wide">
                 Live
               </Badge>
-            </div>
+            </div> */}
             {!isPublic && (
               <div className="absolute top-4 right-4">
                 <Badge className="bg-(--color-text-tertiary) px-3 py-2">
@@ -97,15 +103,26 @@ const PreviewPanel = ({
                 your connection before going live.
               </p>
             </div>
-            <Button
-              size="lg"
-              className="w-full bg-white text-(--color-primary) hover:bg-white/90 h-14"
-              form="stream_setup_form"
-              // disabled={!streamTitle || !category}
-            >
-              <Radio className="size-5 mr-2" />
-              Start Streaming
-            </Button>
+            <div className="flex flex-col gap-4 lg:flex-row">
+              <Button
+                size="lg"
+                onClick={() => setIsSave(false)}
+                className="w-full lg:w-fit flex-1 bg-white text-(--color-primary) hover:bg-white/90 h-14 py-3  lg:py-0 cursor-pointer"
+                form="stream_setup_form"
+              >
+                <Radio className="size-5 mr-2" />
+                Preview Stream
+              </Button>
+              <Button
+                size="lg"
+                form="stream_setup_form"
+                onClick={() => setIsSave(true)}
+                className="w-full lg:w-fit flex-1 bg-white text-(--color-primary) hover:bg-white/90 h-14 py-3 lg:py-0 cursor-pointer"
+              >
+                <BookmarkCheckIcon />
+                Save Stream
+              </Button>
+            </div>
             {(!streamTitle || !category) && (
               <p className="text-xs text-white/80 text-center">
                 Please fill in all required fields to go live
