@@ -218,9 +218,10 @@ export async function getStreamById(id: string) {
   return data;
 }
 
-export async function saveStream(
+export async function StreamAction(
   stream: z.infer<typeof StreamSetupSchema>,
-  host_id: string
+  host_id: string,
+  status: "upcoming" | "past" | "live"
 ) {
   const { data, error } = await supabase
     .from("streams")
@@ -229,7 +230,7 @@ export async function saveStream(
       description: stream.description,
       category: stream.category,
       is_public: stream.isPublic,
-      status: "upcoming",
+      status: status,
       host_id,
     })
     .single();

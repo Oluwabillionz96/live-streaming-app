@@ -1,5 +1,4 @@
 import {
-  BookmarkCheck,
   Mic,
   MicOff,
   Radio,
@@ -90,7 +89,7 @@ const StreamControls = ({
               onClick={() => {
                 startStream();
               }}
-              className="px-8 py-4 bg-gradient-to-r flex-1  from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-500/50"
+              className="px-8 py-4 bg-linear-to-r flex-1  from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-500/50"
             >
               <Radio className="w-5 h-5 inline mr-2" />
               Start <span className="hidden md:inline">Streaming</span>

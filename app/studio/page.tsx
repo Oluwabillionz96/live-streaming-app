@@ -9,6 +9,7 @@ import StreamInfo from "@/components/stream-info";
 import StreamControls from "@/components/stream-controls";
 import { redirect } from "next/navigation";
 import useAuthStore from "@/lib/store/auth-store";
+import { StreamAction } from "@/lib/utils";
 
 export default function LiveStreamPage() {
   const [isStreaming, setIsStreaming] = useState(false);
@@ -24,6 +25,7 @@ export default function LiveStreamPage() {
   const [selectedMic, setSelectedMic] = useState("default");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const user = useAuthStore((state) => state.user);
 
   const streamState = useStreamStore();
   const session = useAuthStore((state) => state.session);
@@ -81,6 +83,12 @@ export default function LiveStreamPage() {
   }, [isMicOn]);
 
   const startStream = async () => {
+    await StreamAction(
+      { title, description: streamState.description, isPublic, category },
+      user?.id ?? "",
+      "live"
+    );
+
     setIsStreaming(true);
     setIsCameraOn(true);
   };

@@ -31,7 +31,7 @@ import Image from "next/image";
 import useStreamStore from "@/lib/store/stream-store";
 import { redirect } from "next/navigation";
 import useAuthStore from "@/lib/store/auth-store";
-import { saveStream } from "@/lib/utils";
+import { StreamAction } from "@/lib/utils";
 
 const categories = [
   "Gaming",
@@ -56,7 +56,7 @@ const SetUpForm = ({
   const user = useAuthStore((state) => state.user);
 
   async function handleSave(streamData: z.infer<typeof StreamSetupSchema>) {
-    const data = await saveStream(streamData, user?.id ?? "");
+    const data = await StreamAction(streamData, user?.id ?? "", "upcoming");
     console.log({ data });
   }
   const onSubmit: SubmitHandler<z.infer<typeof StreamSetupSchema>> = async (

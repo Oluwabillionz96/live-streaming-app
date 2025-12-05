@@ -11,8 +11,6 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import z from "zod";
 import { StreamSetupSchema } from "@/lib/zod-schema";
-import { saveStream } from "@/lib/utils";
-import useAuthStore from "@/lib/store/auth-store";
 import { Dispatch, SetStateAction } from "react";
 
 const PreviewPanel = ({
