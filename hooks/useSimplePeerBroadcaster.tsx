@@ -115,6 +115,16 @@ export const useSimplePeerBroadcaster = (
     [localStream, userId]
   );
 
+  const removePeerConnection = useCallback((viewerId: string) => {
+    const peer = peerConnectionsRef.current.get(viewerId);
+    if (peer) {
+      peer.destroy();
+      peerConnectionsRef.current.delete(viewerId);
+      console.log("Removed peer connection for:", viewerId);
+      setViewerCount((prev) => prev - 1);
+    }
+  }, []);
+
   // Set up Supabase channel for signaling
   useEffect(() => {
     if (!streamId || !userId || !localStream) return;
@@ -161,6 +171,14 @@ export const useSimplePeerBroadcaster = (
         }
       }
     );
+
+    channel.on("broadcast", { event: "viewer-leave" }, (payload) => {
+      const viewerId = payload.payload.viewerId;
+      console.log("Viewer left:", viewerId);
+
+      // Clean up the peer connection
+      removePeerConnection(viewerId);
+    });
 
     // Subscribe to the channel
     channel.subscribe((status: string) => {

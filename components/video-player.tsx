@@ -42,7 +42,7 @@ export default function VideoPlayer({ streamId }: VideoPlayerProps) {
           controls: [
             "play-large",
             "play",
-            "progress",
+            // "progress",
             "current-time",
             "mute",
             "fullscreen",
