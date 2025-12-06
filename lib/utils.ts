@@ -206,7 +206,7 @@ export async function getStreamMessages(stream_id: string) {
 export async function getStreamById(id: string) {
   const { data, error } = await supabase
     .from("streams")
-    .select("*")
+    .select("*, profiles(username, avatar_url)")
     .eq("id", id)
     .single();
 
