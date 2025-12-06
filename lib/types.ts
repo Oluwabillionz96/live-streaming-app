@@ -10,7 +10,6 @@ export interface UpcomingStream {
   category: string;
 }
 
-
 export type Stream = {
   id: string;
   title: string;
@@ -22,6 +21,7 @@ export type Stream = {
   profiles: {
     username: string;
     avatar_url: string;
+    id: string;
   };
   created_at: string;
   updated_at: string;

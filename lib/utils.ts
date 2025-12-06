@@ -159,17 +159,17 @@ export async function getStreams(): Promise<{
   const results = await Promise.all([
     supabase
       .from("streams")
-      .select("*, profiles(username, avatar_url)")
+      .select("*, profiles(username, avatar_url, id)")
       .eq("status", "live")
       .order("created_at", { ascending: true }),
     supabase
       .from("streams")
-      .select("*, profiles(username, avatar_url)")
+      .select("*, profiles(username, avatar_url, id)")
       .eq("status", "upcoming")
       .order("created_at", { ascending: true }),
     supabase
       .from("streams")
-      .select("*, profiles(username, avatar_url)")
+      .select("*, profiles(username, avatar_url, id)")
       .eq("status", "past")
       .order("created_at", { ascending: true }),
   ]);

@@ -4,13 +4,18 @@ import ImageWithFallback from "./image-with-fallback";
 import { Users, Video } from "lucide-react";
 import { Stream } from "@/lib/types";
 
+interface StreamCardProp extends Stream {
+  userId: string;
+}
+
 export default function StreamCard({
   thumbnail_url,
   title,
   category,
   status,
   profiles,
-}: Stream) {
+  userId,
+}: StreamCardProp) {
   return (
     <div className="group cursor-pointer transition-all duration-200 hover:scale-[1.02]">
       <div className="relative aspect-video rounded-lg overflow-hidden bg-(--color-surface)">
@@ -47,7 +52,7 @@ export default function StreamCard({
             className="object-cover"
           />
           <AvatarFallback className="text-purple-900 font-bold text-xl">
-            {profiles.username.trim()[0]}
+            {profiles.id === userId ? "Y" : profiles.username.trim()[0]}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
@@ -55,7 +60,7 @@ export default function StreamCard({
             {title}
           </h3>
           <p className="text-sm text-(--color-text-secondary) truncate">
-            {profiles.username}
+            {profiles.id === userId ? "You" : profiles.username}
           </p>
           <p className="text-sm text-(--color-text-tertiary)">{category}</p>
         </div>

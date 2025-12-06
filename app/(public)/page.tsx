@@ -3,6 +3,7 @@ import EmptyStreamState from "@/components/empty-stream-state";
 import StreamCard from "@/components/stream-card";
 import Tabs from "@/components/tabs";
 import useStream from "@/hooks/useStream";
+import useAuthStore from "@/lib/store/auth-store";
 import { homeTabValues } from "@/lib/utils";
 import { Calendar, Clock, Wifi } from "lucide-react";
 import Link from "next/link";
@@ -13,6 +14,7 @@ export default function HomePage() {
     "live"
   );
   const { streams } = useStream();
+  const user = useAuthStore((state) => state.user);
 
   console.log(streams);
 
@@ -28,8 +30,15 @@ export default function HomePage() {
       {streams[`${activeTab}Streams`].length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {streams[`${activeTab}Streams`].map((stream) => (
-            <Link href={`/watch/${stream.id}`} key={stream.id}>
-              <StreamCard {...stream} />
+            <Link
+              href={
+                stream.profiles.id === user?.id
+                  ? `/studio/1`
+                  : `/watch/${stream.id}`
+              }
+              key={stream.id}
+            >
+              <StreamCard {...stream} userId={user?.id ?? ""} />
             </Link>
           ))}
         </div>
