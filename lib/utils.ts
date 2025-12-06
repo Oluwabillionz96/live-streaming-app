@@ -232,6 +232,7 @@ export async function StreamAction(
       is_public: stream.isPublic,
       status: status,
       host_id,
+      started_at: status === "live" ? new Date().toISOString() : null,
     })
     .select()
     .single();
@@ -242,4 +243,16 @@ export async function StreamAction(
   }
 
   return data;
+}
+
+export async function endLiveStream(streamId: string) {
+  const { error } = await supabase
+    .from("streams")
+    .update({ status: "past", ended_at: new Date().toISOString() })
+    .eq("id", streamId);
+
+  if (error) {
+    console.error({ error });
+    throw new Error("Failed to ennd stream");
+  }
 }

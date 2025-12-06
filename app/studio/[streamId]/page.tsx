@@ -9,14 +9,14 @@ import StreamInfo from "@/components/stream-info";
 import StreamControls from "@/components/stream-controls";
 import { redirect, useParams, useRouter } from "next/navigation";
 import useAuthStore from "@/lib/store/auth-store";
-import { StreamAction } from "@/lib/utils";
+import { endLiveStream, StreamAction } from "@/lib/utils";
 import useStream from "@/hooks/useStream";
+import { useSimplePeerBroadcaster } from "@/hooks/useSimplePeerBroadcaster";
 
 export default function LiveStreamPage() {
-  const [isStreaming, setIsStreaming] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isMicOn, setIsMicOn] = useState(false);
-  const [viewerCount, setViewerCount] = useState(0);
+  // const [viewerCount, setViewerCount] = useState(0);
   const [streamDuration, setStreamDuration] = useState(0);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
@@ -26,9 +26,9 @@ export default function LiveStreamPage() {
   const [selectedMic, setSelectedMic] = useState("default");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const user = useAuthStore((state) => state.user);
 
-  const streamState = useStreamStore();
   const session = useAuthStore((state) => state.session);
   const router = useRouter();
 
@@ -38,7 +38,8 @@ export default function LiveStreamPage() {
   const { streamId } = Array.isArray(params) ? params[0] : params;
 
   const { stream } = useStream(streamId);
-
+  const { isBroadcasting, startBroadcasting, stopBroadcasting, viewerCount } =
+    useSimplePeerBroadcaster(streamId, localStream, user?.id || "");
   useEffect(() => {
     let mounted = true;
 
@@ -64,6 +65,7 @@ export default function LiveStreamPage() {
           videoRef.current.srcObject = stream;
         }
 
+        setLocalStream(stream);
         streamRef.current = stream;
         console.log("Camera started");
       } catch (err: unknown) {
@@ -81,24 +83,54 @@ export default function LiveStreamPage() {
     };
   }, []);
 
-  const endStream = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
+  // STEP 4.5: Stream duration timer (simplest)
+  useEffect(() => {
+    if (!isBroadcasting) return;
 
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      setStreamDuration(elapsedSeconds);
+    }, 1000);
 
-    console.log("Stream ended");
-    router.push("/dashboard/overview");
+    return () => clearInterval(interval);
+  }, [isBroadcasting]);
+
+  const endStream = async () => {
+    try {
+      stopBroadcasting();
+      await endLiveStream(streamId);
+
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+
+      console.log("Stream ended");
+      router.push("/dashboard/overview");
+    } catch (error) {
+      console.error("Failed to end stream:", error);
+      alert("Failed to end stream. Please try again.");
+    }
   };
+
+  // STEP 4.3: Auto-start broadcasting when ready
+  useEffect(() => {
+    // Check if we should start broadcasting
+    if (localStream && stream?.status === "live" && !isBroadcasting) {
+      console.log("Auto-starting WebRTC broadcast...");
+      startBroadcasting();
+    }
+  }, [localStream, stream?.status, isBroadcasting, startBroadcasting]);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white overflow-x-hidden">
       <StudioHeader
-        isStreaming={isStreaming}
+        isStreaming={isBroadcasting}
         streamDuration={streamDuration}
         endStream={endStream}
         viewerCount={viewerCount}
@@ -137,11 +169,21 @@ export default function LiveStreamPage() {
               </div>
             )}
 
-            {isStreaming && (
+            {isBroadcasting && (
               <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 bg-black/70 backdrop-blur px-4 py-2 rounded-lg">
                   <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-semibold">Broadcasting</span>
+                  <span className="text-sm font-semibold">LIVE</span>
+                  <span className="text-sm text-gray-300">
+                    {Math.floor(streamDuration / 60)}:
+                    {(streamDuration % 60).toString().padStart(2, "0")}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 bg-black/70 backdrop-blur px-4 py-2 rounded-lg">
+                  <Users className="w-4 h-4" />
+                  <span className="text-sm font-semibold">
+                    {viewerCount} viewers
+                  </span>
                 </div>
               </div>
             )}
@@ -165,16 +207,16 @@ export default function LiveStreamPage() {
           <StreamInfo
             title={stream?.title ?? ""}
             category={stream?.category ?? ""}
-            isStreaming={stream?.status === "live"}
+            isStreaming={isBroadcasting}
             isPublic={stream?.is_public}
           />
 
-          {isStreaming && (
+          {isBroadcasting && (
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
                 <div className="flex items-center gap-2 text-gray-400 mb-2">
                   <Users className="w-4 h-4" />
-                  <span className="text-xs">Peak Viewers</span>
+                  <span className="text-xs">Current Viewers</span>
                 </div>
                 <p className="text-2xl font-bold">
                   {Math.max(viewerCount, 15)}
