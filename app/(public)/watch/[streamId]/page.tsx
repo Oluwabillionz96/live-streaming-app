@@ -131,10 +131,7 @@ export default function WatchPage() {
       <ChatPanel
         isChatOpen={isChatOpen}
         setIsChatOpen={setIsChatOpen}
-        messages={messages}
-        chatInput={chatInput}
-        setChatInput={setChatInput}
-        handleSendMessage={() => {}}
+        streamId={streamId}
       />
 
       {/* Chat Toggle Button (when closed) */}

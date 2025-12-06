@@ -230,10 +230,7 @@ export default function LiveStreamPage() {
       <ChatPanel
         isChatOpen={isChatOpen}
         setIsChatOpen={setIsChatOpen}
-        setChatInput={setChatInput}
-        messages={messages}
-        chatInput={chatInput}
-        handleSendMessage={() => {}}
+        streamId={streamId}
       />
 
       {/* Chat Toggle Button */}
