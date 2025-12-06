@@ -50,7 +50,7 @@ export default function WatchPage() {
           isChatOpen ? "lg:mr-[450px]" : ""
         }`}
       >
-        <VideoPlayer />
+        <VideoPlayer streamId={streamId} />
 
         {/* Stream Info */}
         <div className="bg-(--color-surface) border-b border-(--color-border) p-8">
@@ -134,7 +134,7 @@ export default function WatchPage() {
         messages={messages}
         chatInput={chatInput}
         setChatInput={setChatInput}
-        handleSendMessage={()=>{}}
+        handleSendMessage={() => {}}
       />
 
       {/* Chat Toggle Button (when closed) */}

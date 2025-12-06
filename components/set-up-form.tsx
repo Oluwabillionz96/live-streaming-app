@@ -28,7 +28,6 @@ import z from "zod";
 import { StreamSetupSchema } from "@/lib/zod-schema";
 import { Field, FieldError, FieldLabel } from "./ui/field";
 import Image from "next/image";
-import useStreamStore from "@/lib/store/stream-store";
 import { redirect } from "next/navigation";
 import useAuthStore from "@/lib/store/auth-store";
 import { StreamAction } from "@/lib/utils";
@@ -51,8 +50,6 @@ const SetUpForm = ({
   handleSubmit: UseFormHandleSubmit<z.infer<typeof StreamSetupSchema>>;
   isSave: boolean;
 }) => {
-  const setStreamInfo = useStreamStore((state) => state.setStreamInfo);
-  const setCanStream = useStreamStore((state) => state.setCanStream);
   const user = useAuthStore((state) => state.user);
 
   async function handleSave(streamData: z.infer<typeof StreamSetupSchema>) {

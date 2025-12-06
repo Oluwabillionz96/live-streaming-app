@@ -1,29 +1,22 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Users, Camera, MessageCircleIcon } from "lucide-react";
 import StudioHeader from "@/components/studio-header";
 import ChatPanel from "@/components/chat-panel";
-import useStreamStore from "@/lib/store/stream-store";
 import StreamInfo from "@/components/stream-info";
-import StreamControls from "@/components/stream-controls";
-import { redirect, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useAuthStore from "@/lib/store/auth-store";
-import { endLiveStream, StreamAction } from "@/lib/utils";
+import { endLiveStream } from "@/lib/utils";
 import useStream from "@/hooks/useStream";
 import { useSimplePeerBroadcaster } from "@/hooks/useSimplePeerBroadcaster";
 
 export default function LiveStreamPage() {
-  const [isCameraOn, setIsCameraOn] = useState(false);
-  const [isMicOn, setIsMicOn] = useState(false);
   // const [viewerCount, setViewerCount] = useState(0);
   const [streamDuration, setStreamDuration] = useState(0);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const [showSettings, setShowSettings] = useState(false);
-  const [selectedCamera, setSelectedCamera] = useState("default");
-  const [selectedMic, setSelectedMic] = useState("default");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
