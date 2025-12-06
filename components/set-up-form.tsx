@@ -59,6 +59,12 @@ const SetUpForm = ({
     const data = await StreamAction(streamData, user?.id ?? "", "upcoming");
     console.log({ data });
   }
+
+  async function startStream(streamData: z.infer<typeof StreamSetupSchema>) {
+    const data = await StreamAction(streamData, user?.id ?? "", "live");
+    return data;
+  }
+
   const onSubmit: SubmitHandler<z.infer<typeof StreamSetupSchema>> = async (
     data
   ) => {
@@ -67,9 +73,8 @@ const SetUpForm = ({
       redirect("/dashboard/streams");
     }
 
-    setStreamInfo(data);
-    setCanStream(true);
-    redirect("/studio");
+    const streamData = await startStream(data);
+    redirect(`/studio/${streamData.id}`);
   };
   return (
     <div className="space-y-8">

@@ -9,7 +9,7 @@ const StreamInfo = ({
   title: string;
   category: string;
   isStreaming: boolean;
-  isPublic: boolean;
+  isPublic: boolean | undefined;
 }) => {
   return (
     <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">

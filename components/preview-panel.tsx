@@ -109,7 +109,7 @@ const PreviewPanel = ({
                 form="stream_setup_form"
               >
                 <Radio className="size-5 mr-2" />
-                Preview Stream
+                Start Stream
               </Button>
               <Button
                 size="lg"

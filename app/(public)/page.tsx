@@ -33,7 +33,7 @@ export default function HomePage() {
             <Link
               href={
                 stream.profiles.id === user?.id
-                  ? `/studio/1`
+                  ? `/studio/${stream.id}`
                   : `/watch/${stream.id}`
               }
               key={stream.id}

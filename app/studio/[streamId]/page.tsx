@@ -7,9 +7,10 @@ import ChatPanel from "@/components/chat-panel";
 import useStreamStore from "@/lib/store/stream-store";
 import StreamInfo from "@/components/stream-info";
 import StreamControls from "@/components/stream-controls";
-import { redirect } from "next/navigation";
+import { redirect, useParams, useRouter } from "next/navigation";
 import useAuthStore from "@/lib/store/auth-store";
 import { StreamAction } from "@/lib/utils";
+import useStream from "@/hooks/useStream";
 
 export default function LiveStreamPage() {
   const [isStreaming, setIsStreaming] = useState(false);
@@ -29,123 +30,69 @@ export default function LiveStreamPage() {
 
   const streamState = useStreamStore();
   const session = useAuthStore((state) => state.session);
-
-  if (!session) redirect("/auth/login");
+  const router = useRouter();
 
   if (session === null) <>Loading...</>;
 
-  useEffect(() => {
-    if (!streamState.canStream) {
-      redirect("/go-live");
-    }
-  }, [streamState.canStream]);
+  const params = useParams();
+  const { streamId } = Array.isArray(params) ? params[0] : params;
 
-  const { title, category, isPublic } = streamState;
+  const { stream } = useStream(streamId);
 
   useEffect(() => {
-    if (isStreaming) {
-      const interval = setInterval(() => {
-        setViewerCount((prev) =>
-          Math.max(0, prev + Math.floor(Math.random() * 5) - 2)
-        );
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [isStreaming]);
+    let mounted = true;
 
-  useEffect(() => {
-    if (isStreaming) {
-      const interval = setInterval(() => {
-        setStreamDuration((prev) => prev + 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [isStreaming]);
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+          },
+        });
 
-  useEffect(() => {
-    console.log(videoRef.current);
-    if (isCameraOn && videoRef.current) {
-      videoRef.current.srcObject = streamRef.current;
-      videoRef.current.play();
-    }
-  }, [isCameraOn, isMicOn]);
+        if (!mounted) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
 
-  const openCamera = useCallback(async () => {
-    if (!videoRef.current) return;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: isMicOn,
-    });
-
-    videoRef.current.srcObject = stream;
-    streamRef.current = stream;
-  }, [isMicOn]);
-
-  const startStream = async () => {
-    await StreamAction(
-      { title, description: streamState.description, isPublic, category },
-      user?.id ?? "",
-      "live"
-    );
-
-    setIsStreaming(true);
-    setIsCameraOn(true);
-  };
-
-  const endStream = async () => {
-    setIsStreaming(false);
-    redirect("/go-live");
-  };
-
-  function toggleCamera() {
-    setIsCameraOn(!isCameraOn);
-  }
-
-  useEffect(() => {
-    if (!isStreaming) return;
-    openCamera();
-
-    return () =>
-      streamRef.current?.getTracks().forEach((track) => track.stop());
-  }, [isStreaming, openCamera]);
-
-  const toggleMic = async () => {
-    setIsMicOn(!isMicOn);
-  };
-
-  //   const startStream = () => {
-  //     if (!isCameraOn) {
-  //       initializeCamera();
-  //     }
-  //     setIsStreaming(true);
-  //     setViewerCount(Math.floor(Math.random() * 10) + 1);
-  //     setStreamDuration(0);
-  //   };
-
-  //   const endStream = () => {
-  //     setIsStreaming(false);
-  //     setStreamDuration(0);
-  //     stopCamera();
-  //   };
-
-  const handleSendMessage = () => {
-    if (!chatInput.trim()) return;
-
-    const newMessage = {
-      id: messages.length + 1,
-      username: "You (Streamer)",
-      avatar:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80",
-      message: chatInput,
-      timestamp: new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      }),
+        streamRef.current = stream;
+        console.log("Camera started");
+      } catch (err: unknown) {
+        console.error("Error accessing camera:", err);
+      }
     };
 
-    // setMessages([...messages, newMessage]);
-    setChatInput("");
+    startCamera();
+
+    return () => {
+      mounted = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
+  const endStream = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+
+    console.log("Stream ended");
+    router.push("/dashboard/overview");
   };
 
   return (
@@ -164,20 +111,20 @@ export default function LiveStreamPage() {
       >
         <div className="space-y-4">
           <div className="relative aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-800">
-            {!isStreaming ? (
+            {stream?.status === "past" ? (
               <div className="w-full h-full flex flex-col items-center justify-center">
                 <Camera className="w-24 h-24 text-gray-700 mb-4" />
-                <p className="text-gray-500 text-lg">Stream not started</p>
-                <p className="text-gray-600 text-sm mt-2 text-center">
+                <p className="text-gray-500 text-lg">Stream has ended</p>
+                {/* <p className="text-gray-600 text-sm mt-2 text-center">
                   Click &quot;Start Stream&quot; to begin broadcasting
-                </p>
+                </p> */}
               </div>
-            ) : isCameraOn ? (
+            ) : true ? (
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
-                // muted
+                muted
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -199,7 +146,7 @@ export default function LiveStreamPage() {
               </div>
             )}
           </div>
-
+          {/* 
           <StreamControls
             toggleCamera={toggleCamera}
             toggleMic={toggleMic}
@@ -209,17 +156,17 @@ export default function LiveStreamPage() {
             setSelectedCamera={setSelectedCamera}
             setSelectedMic={setSelectedMic}
             setShowSettings={setShowSettings}
-            startStream={startStream}
+            startStream={() => {}}
             selectedCamera={selectedCamera}
             selectedMic={selectedMic}
             isStreaming={isStreaming}
-          />
+          /> */}
 
           <StreamInfo
-            title={title}
-            category={category}
-            isStreaming={isStreaming}
-            isPublic={isPublic}
+            title={stream?.title ?? ""}
+            category={stream?.category ?? ""}
+            isStreaming={stream?.status === "live"}
+            isPublic={stream?.is_public}
           />
 
           {isStreaming && (
@@ -251,7 +198,7 @@ export default function LiveStreamPage() {
         setChatInput={setChatInput}
         messages={messages}
         chatInput={chatInput}
-        handleSendMessage={handleSendMessage}
+        handleSendMessage={() => {}}
       />
 
       {/* Chat Toggle Button */}

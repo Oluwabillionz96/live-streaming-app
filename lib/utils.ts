@@ -233,6 +233,7 @@ export async function StreamAction(
       status: status,
       host_id,
     })
+    .select()
     .single();
 
   if (error) {
