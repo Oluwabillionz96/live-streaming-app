@@ -1,150 +1,129 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Users, Camera, MessageCircleIcon } from "lucide-react";
-import { mockMessages } from "@/lib/utils";
 import StudioHeader from "@/components/studio-header";
 import ChatPanel from "@/components/chat-panel";
-import useStreamStore from "@/lib/store/stream-store";
 import StreamInfo from "@/components/stream-info";
-import StreamControls from "@/components/stream-controls";
-import { redirect } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useAuthStore from "@/lib/store/auth-store";
+import { endLiveStream } from "@/lib/utils";
+import useStream from "@/hooks/useStream";
+import { useSimplePeerBroadcaster } from "@/hooks/useSimplePeerBroadcaster";
 
 export default function LiveStreamPage() {
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [isCameraOn, setIsCameraOn] = useState(false);
-  const [isMicOn, setIsMicOn] = useState(false);
-  const [viewerCount, setViewerCount] = useState(0);
+  // const [viewerCount, setViewerCount] = useState(0);
   const [streamDuration, setStreamDuration] = useState(0);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
-  const [messages, setMessages] = useState(mockMessages);
-  const [showSettings, setShowSettings] = useState(false);
-  const [selectedCamera, setSelectedCamera] = useState("default");
-  const [selectedMic, setSelectedMic] = useState("default");
+  const [messages, setMessages] = useState([]);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const user = useAuthStore((state) => state.user);
 
-  const streamState = useStreamStore();
   const session = useAuthStore((state) => state.session);
-
-  if (!session) redirect("/auth/login");
+  const router = useRouter();
 
   if (session === null) <>Loading...</>;
 
+  const params = useParams();
+  const { streamId } = Array.isArray(params) ? params[0] : params;
+
+  const { stream } = useStream(streamId);
+  const { isBroadcasting, startBroadcasting, stopBroadcasting, viewerCount } =
+    useSimplePeerBroadcaster(streamId, localStream, user?.id || "");
   useEffect(() => {
-    if (!streamState.canStream) {
-      redirect("/go-live");
-    }
-  }, [streamState.canStream]);
+    let mounted = true;
 
-  const { title, category, isPublic } = streamState;
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+          },
+        });
 
-  useEffect(() => {
-    if (isStreaming) {
-      const interval = setInterval(() => {
-        setViewerCount((prev) =>
-          Math.max(0, prev + Math.floor(Math.random() * 5) - 2)
-        );
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [isStreaming]);
+        if (!mounted) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
 
-  useEffect(() => {
-    if (isStreaming) {
-      const interval = setInterval(() => {
-        setStreamDuration((prev) => prev + 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [isStreaming]);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
 
-  useEffect(() => {
-    console.log(videoRef.current);
-    if (isCameraOn && videoRef.current) {
-      videoRef.current.srcObject = streamRef.current;
-      videoRef.current.play();
-    }
-  }, [isCameraOn, isMicOn]);
-
-  const openCamera = useCallback(async () => {
-    if (!videoRef.current) return;
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: isMicOn,
-    });
-
-    videoRef.current.srcObject = stream;
-    streamRef.current = stream;
-  }, [isMicOn]);
-
-  const startStream = async () => {
-    setIsStreaming(true);
-    setIsCameraOn(true);
-  };
-
-  const endStream = async () => {
-    setIsStreaming(false);
-    redirect("/go-live");
-  };
-
-  function toggleCamera() {
-    setIsCameraOn(!isCameraOn);
-  }
-
-  useEffect(() => {
-    if (!isStreaming) return;
-    openCamera();
-
-    return () =>
-      streamRef.current?.getTracks().forEach((track) => track.stop());
-  }, [isStreaming]);
-
-  const toggleMic = async () => {
-    setIsMicOn(!isMicOn);
-  };
-
-  //   const startStream = () => {
-  //     if (!isCameraOn) {
-  //       initializeCamera();
-  //     }
-  //     setIsStreaming(true);
-  //     setViewerCount(Math.floor(Math.random() * 10) + 1);
-  //     setStreamDuration(0);
-  //   };
-
-  //   const endStream = () => {
-  //     setIsStreaming(false);
-  //     setStreamDuration(0);
-  //     stopCamera();
-  //   };
-
-  const handleSendMessage = () => {
-    if (!chatInput.trim()) return;
-
-    const newMessage = {
-      id: messages.length + 1,
-      username: "You (Streamer)",
-      avatar:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80",
-      message: chatInput,
-      timestamp: new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      }),
+        setLocalStream(stream);
+        streamRef.current = stream;
+        console.log("Camera started");
+      } catch (err: unknown) {
+        console.error("Error accessing camera:", err);
+      }
     };
 
-    setMessages([...messages, newMessage]);
-    setChatInput("");
+    startCamera();
+
+    return () => {
+      mounted = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
+  // STEP 4.5: Stream duration timer (simplest)
+  useEffect(() => {
+    if (!isBroadcasting) return;
+
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      setStreamDuration(elapsedSeconds);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isBroadcasting]);
+
+  const endStream = async () => {
+    try {
+      stopBroadcasting();
+      await endLiveStream(streamId);
+
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+
+      console.log("Stream ended");
+      router.push("/dashboard/overview");
+    } catch (error) {
+      console.error("Failed to end stream:", error);
+      alert("Failed to end stream. Please try again.");
+    }
   };
+
+  // STEP 4.3: Auto-start broadcasting when ready
+  useEffect(() => {
+    // Check if we should start broadcasting
+    if (localStream && stream?.status === "live" && !isBroadcasting) {
+      console.log("Auto-starting WebRTC broadcast...");
+      startBroadcasting();
+    }
+  }, [localStream, stream?.status, isBroadcasting, startBroadcasting]);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white overflow-x-hidden">
       <StudioHeader
-        isStreaming={isStreaming}
+        isStreaming={isBroadcasting}
         streamDuration={streamDuration}
         endStream={endStream}
         viewerCount={viewerCount}
@@ -157,20 +136,20 @@ export default function LiveStreamPage() {
       >
         <div className="space-y-4">
           <div className="relative aspect-video bg-gray-900 rounded-xl overflow-hidden border border-gray-800">
-            {!isStreaming ? (
+            {stream?.status === "past" ? (
               <div className="w-full h-full flex flex-col items-center justify-center">
                 <Camera className="w-24 h-24 text-gray-700 mb-4" />
-                <p className="text-gray-500 text-lg">Stream not started</p>
-                <p className="text-gray-600 text-sm mt-2 text-center">
+                <p className="text-gray-500 text-lg">Stream has ended</p>
+                {/* <p className="text-gray-600 text-sm mt-2 text-center">
                   Click &quot;Start Stream&quot; to begin broadcasting
-                </p>
+                </p> */}
               </div>
-            ) : isCameraOn ? (
+            ) : true ? (
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
-                // muted
+                muted
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -183,16 +162,26 @@ export default function LiveStreamPage() {
               </div>
             )}
 
-            {isStreaming && (
+            {isBroadcasting && (
               <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
                 <div className="flex items-center gap-3 bg-black/70 backdrop-blur px-4 py-2 rounded-lg">
                   <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-semibold">Broadcasting</span>
+                  <span className="text-sm font-semibold">LIVE</span>
+                  <span className="text-sm text-gray-300">
+                    {Math.floor(streamDuration / 60)}:
+                    {(streamDuration % 60).toString().padStart(2, "0")}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 bg-black/70 backdrop-blur px-4 py-2 rounded-lg">
+                  <Users className="w-4 h-4" />
+                  <span className="text-sm font-semibold">
+                    {viewerCount} viewers
+                  </span>
                 </div>
               </div>
             )}
           </div>
-
+          {/* 
           <StreamControls
             toggleCamera={toggleCamera}
             toggleMic={toggleMic}
@@ -202,25 +191,25 @@ export default function LiveStreamPage() {
             setSelectedCamera={setSelectedCamera}
             setSelectedMic={setSelectedMic}
             setShowSettings={setShowSettings}
-            startStream={startStream}
+            startStream={() => {}}
             selectedCamera={selectedCamera}
             selectedMic={selectedMic}
             isStreaming={isStreaming}
-          />
+          /> */}
 
           <StreamInfo
-            title={title}
-            category={category}
-            isStreaming={isStreaming}
-            isPublic={isPublic}
+            title={stream?.title ?? ""}
+            category={stream?.category ?? ""}
+            isStreaming={isBroadcasting}
+            isPublic={stream?.is_public}
           />
 
-          {isStreaming && (
+          {isBroadcasting && (
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
                 <div className="flex items-center gap-2 text-gray-400 mb-2">
                   <Users className="w-4 h-4" />
-                  <span className="text-xs">Peak Viewers</span>
+                  <span className="text-xs">Current Viewers</span>
                 </div>
                 <p className="text-2xl font-bold">
                   {Math.max(viewerCount, 15)}
@@ -241,16 +230,13 @@ export default function LiveStreamPage() {
       <ChatPanel
         isChatOpen={isChatOpen}
         setIsChatOpen={setIsChatOpen}
-        setChatInput={setChatInput}
-        messages={messages}
-        chatInput={chatInput}
-        handleSendMessage={handleSendMessage}
+        streamId={streamId}
       />
 
       {/* Chat Toggle Button */}
       {!isChatOpen && (
         <button
-          className="fixed right-6 bottom-6 lg:bottom-auto lg:top-32 bg-blue-600 hover:bg-blue-700 shadow-lg z-[100] px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
+          className="fixed right-6 bottom-6 lg:bottom-auto lg:top-32 bg-blue-600 hover:bg-blue-700 shadow-lg z-100 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center"
           onClick={() => setIsChatOpen(true)}
         >
           <span className="hidden md:flex items-center gap-2">

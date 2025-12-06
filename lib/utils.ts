@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ChatMessage, UpcomingStream } from "./types";
+import { Stream, UpcomingStream } from "./types";
+import { supabase } from "./supabase-client";
+import z from "zod";
+import { StreamSetupSchema } from "./zod-schema";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -118,48 +121,17 @@ export const upcomingStreams: UpcomingStream[] = [
   },
 ];
 
-export const mockMessages: ChatMessage[] = [
-  {
-    id: 1,
-    username: "GamerFan123",
-    avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80",
-    message: "This is amazing! 🔥",
-    timestamp: "2:34 PM",
-  },
-  {
-    id: 2,
-    username: "StreamLover",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
-    message: "Great content as always!",
-    timestamp: "2:35 PM",
-  },
-  {
-    id: 3,
-    username: "ProPlayer_X",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80",
-    message: "How did you pull that off?",
-    timestamp: "2:36 PM",
-  },
-  {
-    id: 4,
-    username: "ChatMaster",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
-    message: "New follower here! Love the stream",
-    timestamp: "2:37 PM",
-  },
-  {
-    id: 5,
-    username: "EliteGamer",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
-    message: "Can you show that strategy again?",
-    timestamp: "2:38 PM",
-  },
-];
+export function formatDate(isoTimestamp: string): string {
+  const date = new Date(isoTimestamp);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
+  return `${Math.floor(minutes / 1440)}d ago`;
+}
 
 export const formatDuration = (seconds: number) => {
   const hrs = Math.floor(seconds / 3600);
@@ -169,3 +141,118 @@ export const formatDuration = (seconds: number) => {
     .toString()
     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
+
+export const homeTabValues: {
+  activeTab: "live" | "past" | "upcoming";
+  value: string;
+}[] = [
+  { activeTab: "live", value: "Live Now" },
+  { activeTab: "upcoming", value: " Upcoming" },
+  { activeTab: "past", value: "Past Streams" },
+];
+
+export async function getStreams(): Promise<{
+  liveStreams: Stream[];
+  upcomingStreams: Stream[];
+  pastStreams: Stream[];
+}> {
+  const results = await Promise.all([
+    supabase
+      .from("streams")
+      .select("*, profiles(username, avatar_url, id)")
+      .eq("status", "live")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("streams")
+      .select("*, profiles(username, avatar_url, id)")
+      .eq("status", "upcoming")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("streams")
+      .select("*, profiles(username, avatar_url, id)")
+      .eq("status", "past")
+      .order("created_at", { ascending: true }),
+  ]);
+
+  const [live, upcoming, past] = results;
+
+  if (live.error || upcoming.error || past.error) {
+    console.error({ live, upcoming, past });
+    throw new Error("Failed to fetch streams");
+  }
+
+  return {
+    liveStreams: live.data || [],
+    upcomingStreams: upcoming.data || [],
+    pastStreams: past.data || [],
+  };
+}
+
+export async function getStreamMessages(stream_id: string) {
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*, profiles(username, avatar_url)")
+    .eq("stream_id", stream_id)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error({ error, data });
+    throw new Error("Failed to fetch stream messages");
+  }
+
+  return data;
+}
+
+export async function getStreamById(id: string) {
+  const { data, error } = await supabase
+    .from("streams")
+    .select("*, profiles(username, avatar_url)")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error({ error, data });
+    throw new Error("Failed to fetch stream");
+  }
+
+  return data;
+}
+
+export async function StreamAction(
+  stream: z.infer<typeof StreamSetupSchema>,
+  host_id: string,
+  status: "upcoming" | "past" | "live"
+) {
+  const { data, error } = await supabase
+    .from("streams")
+    .insert({
+      title: stream.title,
+      description: stream.description,
+      category: stream.category,
+      is_public: stream.isPublic,
+      status: status,
+      host_id,
+      started_at: status === "live" ? new Date().toISOString() : null,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error({ error, data });
+    throw new Error("Failed to fetch stream");
+  }
+
+  return data;
+}
+
+export async function endLiveStream(streamId: string) {
+  const { error } = await supabase
+    .from("streams")
+    .update({ status: "past", ended_at: new Date().toISOString() })
+    .eq("id", streamId);
+
+  if (error) {
+    console.error({ error });
+    throw new Error("Failed to ennd stream");
+  }
+}

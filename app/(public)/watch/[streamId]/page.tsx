@@ -2,48 +2,24 @@
 
 import { useState } from "react";
 
-import {
-  Heart,
-  Users,
-  Share2,
-  ChevronLeft,
-  Radio,
-  MessageCircleIcon,
-} from "lucide-react";
+import { Heart, Share2, ChevronLeft, MessageCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ImageWithFallback from "@/components/image-with-fallback";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChatMessage } from "@/lib/types";
-import { mockMessages } from "@/lib/utils";
+
 import ChatPanel from "@/components/chat-panel";
 import VideoPlayer from "@/components/video-player";
+import { useParams } from "next/navigation";
+import useStream from "@/hooks/useStream";
 
 export default function WatchPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [chatInput, setChatInput] = useState("");
-  const [messages, setMessages] = useState(mockMessages);
   const badges = [" Gaming", "Tournament", "Pro Player", "Competitive"];
+  const params = useParams();
+  const { streamId } = Array.isArray(params) ? params[0] : params;
 
-  const handleSendMessage = () => {
-    if (!chatInput.trim()) return;
-
-    const newMessage: ChatMessage = {
-      id: messages.length + 1,
-      username: "You",
-      avatar:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80",
-      message: chatInput,
-      timestamp: new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      }),
-    };
-
-    setMessages([...messages, newMessage]);
-    setChatInput("");
-  };
+  const { stream } = useStream(streamId);
 
   return (
     <>
@@ -52,25 +28,30 @@ export default function WatchPage() {
           isChatOpen ? "lg:mr-[450px]" : ""
         }`}
       >
-        <VideoPlayer />
+        <VideoPlayer streamId={streamId} />
 
         {/* Stream Info */}
         <div className="bg-(--color-surface) border-b border-(--color-border) p-8">
           <div className="flex  flex-col md:flex-row items-start justify-between gap-8 md:gap-6 mb-6">
             <div className="flex-1">
-              <h2 className="mb-4 text-xs">
-                Pro Tournament Finals - Epic Gameplay
-              </h2>
+              <h2 className="mb-4 text-xs">{stream?.title}</h2>
               <div className="flex items-center gap-4">
-                <Avatar className="size-14">
+                <Avatar className="size-10 shrink-0">
                   <AvatarImage
-                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80"
+                    src={
+                      stream?.profiles.avatar_url
+                        ? stream?.profiles.avatar_url
+                        : undefined
+                    }
+                    alt={stream?.profiles.username}
                     className="object-cover"
                   />
-                  <AvatarFallback>PG</AvatarFallback>
+                  <AvatarFallback className="text-purple-900 font-bold text-xl">
+                    {stream?.profiles.username.slice(0, 2)}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4>ProGamer_X</h4>
+                  <h4>{stream?.profiles.username}</h4>
                   <p className="text-sm text-(--color-text-secondary)">
                     45.2K followers
                   </p>
@@ -120,11 +101,7 @@ export default function WatchPage() {
         <div className="bg-(--color-surface) p-8 flex-1 overflow-auto">
           <h4 className="mb-3">About this stream</h4>
           <p className="text-(--color-text-secondary) leading-relaxed">
-            Welcome to the grand finals! Today we&apos;re competing for the
-            championship title in one of the most anticipated tournaments of the
-            year. Stick around for incredible plays, expert commentary, and a
-            chance to win exclusive giveaways. Don&apos;t forget to follow and
-            turn on notifications!
+            {stream?.description}
           </p>
         </div>
       </div>
@@ -133,10 +110,7 @@ export default function WatchPage() {
       <ChatPanel
         isChatOpen={isChatOpen}
         setIsChatOpen={setIsChatOpen}
-        messages={messages}
-        chatInput={chatInput}
-        setChatInput={setChatInput}
-        handleSendMessage={handleSendMessage}
+        streamId={streamId}
       />
 
       {/* Chat Toggle Button (when closed) */}

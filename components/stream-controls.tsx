@@ -3,7 +3,6 @@ import {
   MicOff,
   Radio,
   Settings,
-  Share2,
   Video,
   VideoOff,
 } from "lucide-react";
@@ -85,15 +84,26 @@ const StreamControls = ({
         </div>
 
         {!isStreaming && (
-          <button
-            onClick={() => {
-              startStream();
-            }}
-            className="px-8 py-4 bg-gradient-to-r flex-1  from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-500/50"
-          >
-            <Radio className="w-5 h-5 inline mr-2" />
-            Start <span className="hidden md:inline">Streaming</span>
-          </button>
+          <>
+            <button
+              onClick={() => {
+                startStream();
+              }}
+              className="px-8 py-4 bg-linear-to-r flex-1  from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all shadow-lg shadow-blue-500/50"
+            >
+              <Radio className="w-5 h-5 inline mr-2" />
+              Start <span className="hidden md:inline">Streaming</span>
+            </button>
+            {/* <button
+              onClick={() => {
+                startStream();
+              }}
+              className="p-4 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer"
+            >
+              <BookmarkCheck className="w-5 h-5 inline mr-2" />
+              <span className="hidden md:inline">Save as Drafts</span>
+            </button> */}
+          </>
         )}
       </div>
 

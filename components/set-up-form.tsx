@@ -28,8 +28,9 @@ import z from "zod";
 import { StreamSetupSchema } from "@/lib/zod-schema";
 import { Field, FieldError, FieldLabel } from "./ui/field";
 import Image from "next/image";
-import useStreamStore from "@/lib/store/stream-store";
 import { redirect } from "next/navigation";
+import useAuthStore from "@/lib/store/auth-store";
+import { StreamAction } from "@/lib/utils";
 
 const categories = [
   "Gaming",
@@ -43,18 +44,34 @@ const categories = [
 const SetUpForm = ({
   control,
   handleSubmit,
+  isSave,
 }: {
   control: Control<z.infer<typeof StreamSetupSchema>>;
   handleSubmit: UseFormHandleSubmit<z.infer<typeof StreamSetupSchema>>;
+  isSave: boolean;
 }) => {
-  const setStreamInfo = useStreamStore((state) => state.setStreamInfo);
-  const setCanStream = useStreamStore((state) => state.setCanStream);
+  const user = useAuthStore((state) => state.user);
+
+  async function handleSave(streamData: z.infer<typeof StreamSetupSchema>) {
+    const data = await StreamAction(streamData, user?.id ?? "", "upcoming");
+    console.log({ data });
+  }
+
+  async function startStream(streamData: z.infer<typeof StreamSetupSchema>) {
+    const data = await StreamAction(streamData, user?.id ?? "", "live");
+    return data;
+  }
+
   const onSubmit: SubmitHandler<z.infer<typeof StreamSetupSchema>> = async (
     data
   ) => {
-    setStreamInfo(data);
-    setCanStream(true);
-    redirect("/studio");
+    if (isSave) {
+      await handleSave(data);
+      redirect("/dashboard/streams");
+    }
+
+    const streamData = await startStream(data);
+    redirect(`/studio/${streamData.id}`);
   };
   return (
     <div className="space-y-8">
